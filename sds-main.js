@@ -11,7 +11,7 @@ if (navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)) {
 }
 
 var background_path = "tree.jpeg";
-regex_cmd = /%#?[a-z,0-9]+:/g;
+regex_cmd = /\§#?[a-z,0-9]+\$/g;
 
 var language;
 var languageJSON;
