@@ -11,7 +11,9 @@ if (navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)) {
 }
 
 var background_path = "tree.jpeg";
-regex_cmd = /\§#?[a-z,0-9]+\$/g;
+var regex_cmd = /\§#?[a-z,0-9]+\$/g;
+var max_ll = 25;
+var scale_factor = 500;
 
 var language;
 var languageJSON;
@@ -389,11 +391,22 @@ function setFormat(format) {
             // change .stickerdemo width and height to 28em
             document.querySelector('.stickerdemo').style.width = '28em';
             document.querySelector('.stickerdemo').style.height = '28em';
+            max_ll = 25;
+            scale_factor = 500;
             break;
         case 'sticker':
-            // change .stickerdemo width to 20em and height to 28em
+            // change .stickerdemo width to 20em and height to 30em
             document.querySelector('.stickerdemo').style.width = '20em';
-            document.querySelector('.stickerdemo').style.height = '28em';
+            document.querySelector('.stickerdemo').style.height = '30em';
+            max_ll = 17;
+            scale_factor = 500;
+            break;
+        case 'story':
+            // change .stickerdemo width to 20em and height to 40em
+            document.querySelector('.stickerdemo').style.width = '20em';
+            document.querySelector('.stickerdemo').style.height = '40em';
+            max_ll = 17;
+            scale_factor = 650;
             break;
     }
 }
@@ -472,7 +485,6 @@ function renderText() {
                 renderedText += '<br>';
             }
         } else {
-            var max_ll = 25;
             var args = '';
             // remove commands %<command> from line
             var rlines = lines[i].replace(regex_cmd, '');
@@ -522,7 +534,7 @@ function handleCommands(line) {
         if (cmd == 'white') {
             style += 'background-color: white; color: black;';
         }
-        // if command is %#<hex color> set background color to <hex color>
+        // if command is #<hex color> set background color to <hex color>
         else if (cmd.match(/#[0-9a-fA-F]{6}/)) {
             console.log('match');
             style += 'background-color: ' + cmd.slice(0) + ';';
@@ -533,9 +545,18 @@ function handleCommands(line) {
                 style += 'color: white;';
             }
         }
-        // if command is %small set scale to 0.8
+        // if command is transparent set background color to transparent
+        else if (cmd == 'transparent') {
+            style += 'background-color: transparent;';
+        }
+        // if command is small set scale to 0.8
         else if (cmd == 'small') {
             style += 'transform: scale(0.8);';
+        }
+        // if command is text set font-family to Open Sans and font-size to 1em
+        else if (cmd == 'text') {
+            style += 'font-family: Open-Sans;';
+            style += 'font-size: 0.7em;';
         }
     }
     return args + 'style="' + style + '"';
@@ -561,10 +582,10 @@ function adjustOnResize() {
 
     if (mobile && portrait && !awkward) {
         // adjust .stickerdemo to be the max of 90% of width of the screen or 90% of height of the screen
-        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9) / 500 + ')';
+        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9) / scale_factor + ')';
     } else {
         // adjust .stickerdemo to be the max of 50% of the width of the screen or 50% of the height of the screen
-        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth / 2, window.innerHeight / 2) / 500 + ')';
+        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth / 2, window.innerHeight / 2) / scale_factor + ')';
     }
 }
 
