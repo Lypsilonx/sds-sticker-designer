@@ -13,6 +13,7 @@ if (navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)) {
 var background_path = "tree.jpeg";
 var regex_cmd = /\§#?[a-z,0-9]+\$/g;
 var max_ll = 25;
+var max_lines = 10;
 var scale_factor = 500;
 
 var language;
@@ -393,6 +394,7 @@ function setFormat(format) {
             document.querySelector('.stickerdemo').style.height = '28em';
             max_ll = 25;
             scale_factor = 500;
+            max_lines = 10;
             break;
         case 'sticker':
             // change .stickerdemo width to 20em and height to 30em
@@ -400,6 +402,7 @@ function setFormat(format) {
             document.querySelector('.stickerdemo').style.height = '30em';
             max_ll = 17;
             scale_factor = 500;
+            max_lines = 10;
             break;
         case 'story':
             // change .stickerdemo width to 20em and height to 40em
@@ -407,6 +410,7 @@ function setFormat(format) {
             document.querySelector('.stickerdemo').style.height = '40em';
             max_ll = 17;
             scale_factor = 650;
+            max_lines = 15;
             break;
     }
 }
@@ -435,7 +439,6 @@ function textUpdate() {
     } else {
         document.querySelector('.renderedtext').style.transform = 'scale(0.5)';
     }
-    
 
     // when input (without whitespaces) is empty set the content of .input to an invisible character
     if (document.querySelector('.input').textContent.replace(/\s/g, '') == '') {
@@ -468,7 +471,8 @@ function renderText() {
     // for every line in .input (remove the preceding and trailing whitespace)
     var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
     var renderedText = '';
-    for (var i = 0; i < lines.length; i++) {
+    var l = 0;
+    for (var i = 0; i < lines.length && i <= max_lines; i++) {
         // if .input only contains u200B
         if (lines[i].replace(/\s/g, '') == '\u200B') {
             // set .renderedtext to an empty string
@@ -477,12 +481,13 @@ function renderText() {
         }
 
         // create p for every line
-        
+
         // if line is empty add a <br>
-        if (lines[i] == '') {
+        if (lines[i] == '' && l < max_lines) {
             // if line is not the last line add a <br>
             if (i != lines.length - 1) {
                 renderedText += '<br>';
+                l += 1;
             }
         } else {
             var args = '';
@@ -501,17 +506,20 @@ function renderText() {
                         }
 
                         renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '')+ '</p>';
+                        l += 1;
                         line = '';
                     }
                     line += words[j] + ' ';
                 }
                 renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
+                l += 1;
             } else {
                 if (regex_cmd.test(lines[i])) {
                     args = handleCommands(lines[i]);
                 }
 
                 renderedText += '<p ' + args + '>' + rlines + '</p>';
+                l += 1;
             }
         }
     }

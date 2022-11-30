@@ -618,6 +618,8 @@ form {
   margin: 1em;
   width: max-content;
   max-width: calc(200% - 5em);
+  max-height: calc(200% - 5em);
+  overflow: clip;
 
   /* break words when over max-width */
   word-wrap: break-word;
