@@ -11,6 +11,7 @@ if (navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)) {
 }
 
 var background_path = "tree.jpeg";
+regex_cmd = /%#?[a-z,0-9]+:/g;
 
 var language;
 var languageJSON;
@@ -474,27 +475,27 @@ function renderText() {
             var max_ll = 25;
             var args = '';
             // remove commands %<command> from line
-            var rlines = lines[i].replace(/%#?[a-z,0-9]+/g, '');
+            var rlines = lines[i].replace(regex_cmd, '');
             // if line is too long split it into multiple lines
             if (rlines.length > max_ll) {
                 var words = lines[i].split(' ');
                 var line = '';
                 for (var j = 0; j < words.length; j++) {
                     // if line is too long (actual size) add a <br>
-                    if (line.replace(/%#?[a-z,0-9]+/g, '').length + (/%#?[a-z,0-9]+/.test(words[j]) ? 0 : words[j].length) > max_ll) {
+                    if (line.replace(regex_cmd, '').length + (regex_cmd.test(words[j]) ? 0 : words[j].length) > max_ll) {
                         // if commands in line
-                        if (/%#?[a-z,0-9]+/.test(line)) {
+                        if (regex_cmd.test(line)) {
                             args = handleCommands(line);
                         }
 
-                        renderedText += '<p ' + args + '>' + line.replace(/%#?[a-z,0-9]+/g, '')+ '</p>';
+                        renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '')+ '</p>';
                         line = '';
                     }
                     line += words[j] + ' ';
                 }
-                renderedText += '<p ' + args + '>' + line.replace(/%#?[a-z,0-9]+/g, '') + '</p>';
+                renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
             } else {
-                if (/%#?[a-z,0-9]+/.test(lines[i])) {
+                if (regex_cmd.test(lines[i])) {
                     args = handleCommands(lines[i]);
                 }
 
@@ -512,12 +513,12 @@ function handleCommands(line) {
     var style = '';
 
     // get all commands
-    var commands = line.match(/%#?[a-z,0-9]+/g);
+    var commands = line.match(regex_cmd);
 
     // handle commands
     for (var k = 0; k < commands.length; k++) {
-        var cmd = commands[k].replace('%', '');
-        console.log(cmd);
+        // remove last and first character
+        var cmd = commands[k].slice(1, -1);
         if (cmd == 'white') {
             style += 'background-color: white; color: black;';
         }
