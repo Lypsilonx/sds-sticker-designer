@@ -725,6 +725,9 @@ function loadSticker(save_name) {
             // if the save_name doesn't exist, do nothing
             return;
         }
+        // Delete autosave
+        localStorage.removeItem('temp');
+
         // get the settings from localStorage
         var settings = JSON.parse(localStorage.getItem('Sticker:' + save_name));
 
