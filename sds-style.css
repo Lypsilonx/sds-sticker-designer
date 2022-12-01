@@ -119,11 +119,6 @@ h1 {
   width: 40%;
   /* animate comig up */
   transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out;
-
-  &.hidden {
-    bottom: -4em;
-    opacity: 0;
-  }
 }
 #messageboard.hidden {
   /* transform: translateY(7em);
