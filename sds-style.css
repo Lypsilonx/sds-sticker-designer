@@ -608,7 +608,7 @@ input::-webkit-color-swatch-wrapper {
   padding: 0.2em;
   padding-left: 0.5em;
   padding-right: 0.5em;
-  transform-origin: top left;
+  transform-origin: center left;
 }
 .renderedtext > p.text {
   font-family: Open-Sans;

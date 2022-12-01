@@ -652,9 +652,10 @@ function handleCommands(line) {
         else if (cmd == 'text') {
             args += 'class = "text"';
         }
-        // if command is right set align self to flex-end
+        // if command is right set align self to flex-end and transform origin to center right
         else if (cmd == 'right') {
             style += 'align-self: flex-end;';
+            style += 'transform-origin: center right;';
         }
     }
     return args + 'style="' + style + '"';
