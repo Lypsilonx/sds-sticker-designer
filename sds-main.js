@@ -508,15 +508,15 @@ function unhidePercentage() {
 /** Scales .input and .renderedtext if the line overflows */
 function textUpdate() {
     var em = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    if (document.querySelector('.input').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 6 * em)) {
-        document.querySelector('.input').style.transform = 'scale(' + (document.querySelector('.backgroundimage').offsetWidth - 6 * em) / document.querySelector('.input').offsetWidth + ')';
+    if (document.querySelector('.input').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
+        document.querySelector('.input').style.transform = 'scale(' + (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / document.querySelector('.input').offsetWidth + ')';
     } else {
         document.querySelector('.input').style.transform = 'scale(0.5)';
     }
 
     // scale .renderedtext using the same method
-    if (document.querySelector('.renderedtext').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 6 * em)) {
-        document.querySelector('.renderedtext').style.transform = 'scale(' + (document.querySelector('.backgroundimage').offsetWidth - 6 * em) / document.querySelector('.renderedtext').offsetWidth + ')';
+    if (document.querySelector('.renderedtext').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
+        document.querySelector('.renderedtext').style.transform = 'scale(' + (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / document.querySelector('.renderedtext').offsetWidth + ')';
     } else {
         document.querySelector('.renderedtext').style.transform = 'scale(0.5)';
     }

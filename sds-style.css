@@ -592,7 +592,7 @@ input::-webkit-color-swatch-wrapper {
   align-items: flex-start;
   position: absolute;
   margin: 1em;
-  width: calc(200% - 5em);
+  width: calc(200% - 4em);
   color: white;
   font-size: 2.5em;
   transform: scale(0.5);
