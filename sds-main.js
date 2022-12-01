@@ -1,57 +1,101 @@
-// remove no-js class from body
+// CSS Adjusts (hides) Elements if JavaScript is not enabled
 document.body.classList.remove('no-js');
 
-// set mobile bool if screen under 700px wide or if user agent is mobile
+/** User Agent is Mobile */
 var mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 document.body.classList.add('mobile');
 
-// if on ios or macos change #sharebutton i to ios share icon
-if (navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)) {
-    document.getElementById('sharebutton').querySelector('i').innerText = 'ios_share';
-}
-
+// #region Variables
+/** Default Image (redundancy in sds-style.css under .backgroundimage) */
 var background_path = "tree.jpeg";
+
+/** Format of commands in the text (Always use starting and ending characters) */
 var regex_cmd = /\§#?[a-z,0-9]+\$/g;
+
+/** Max line length for normal input. adjust max_ll_text for using "text" command) */
 var max_ll = 25;
+
+/** Max line length when using "text" command */
+var max_ll_text = 55;
+
+/** Max lines until rendering cuts off */
 var max_lines = 10;
+
+/** Factor used to scale sticker element (Higher -> smaller) */
 var scale_factor = 500;
 
+/** The current language */
 var language;
+
+/** JSON File with language data */
 var languageJSON;
+
+/** Content of the save_name box */
+var save_name;
+
+// #endregion
+
+// Load Language Setting
 if (localStorage.getItem('language') === null) {
     language = 'en';
 } else {
     language = localStorage.getItem('language');
 }
 
-// load language json file
+// Change share icon on Apple devices
+if (navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)) {
+    document.getElementById('sharebutton').querySelector('i').innerText = 'ios_share';
+}
+
+// Load Language File
 fetch("language.json")
 .then(response => response.json())
 .then(json => {
     languageJSON = json;
+
+    // #region Setup
+
+    // Apply Language
     setLanguage();
 
+    // Adjust to screen size
     adjustOnResize();
 
-    // load save_name from localStorage
-    var save_name = localStorage.getItem('save_name');
-    //if temp is not null load temp
+    // Load Save Name
+    save_name = localStorage.getItem('save_name');
+    
+    // Load Autosave
     if (localStorage.getItem('temp') !== null) {
         loadSticker('temp');
 
         save_name = localStorage.getItem('save_name');
         document.getElementById('save_name').value = save_name;
-    } else if (save_name == null) {
-        save_name = "Sticker";
-    } else {
+    }
+    // No Autosave
+    else if (save_name != null) {
         // put save_name in #save_name
         document.getElementById('save_name').value = save_name;
         loadSticker(save_name);
     }
+    // No Save
+    else {
+        save_name = "Sticker";
+    }
+
+    // Update Save Name
     updateSaveName();
+
+    // Resize Textareas
     textUpdate();
+
+    // Render Text
     renderText();
 
+    // #endregion
+
+    // #region Triggers
+
+    // keypresses
     document.addEventListener('keydown', function(e) {
         // when ctrl+s is pressed
         if (e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
@@ -75,6 +119,12 @@ fetch("language.json")
         }
     });
 
+    // Screen Resize
+    window.addEventListener('resize', function(e) {
+        adjustOnResize();
+    });
+
+    // #region Settings 
     // when an image is uploaded to #background_image set the background image of .backgroundimage
     document.getElementById('background_image').addEventListener('change', function(e) {
         loadBackgroundImage(e.target.files[0]);
@@ -99,7 +149,9 @@ fetch("language.json")
     document.getElementById('format').addEventListener('change', function(e) {
         setFormat(e.target.value);
     });
+    // #endregion
 
+    // #region Tint
     // wehn entering .stickerdemo with mouse stop the timer and unhide #opacitypercentage
     document.querySelector('.stickerdemo').addEventListener('mouseenter', function(e) {
         unhidePercentage();
@@ -143,27 +195,21 @@ fetch("language.json")
         // hide #opacitypercentage
         document.getElementById('opacitypercentage').style.opacity = 0;
     });
+    // #endregion
     
-    // when .input is wider than .backgroundimage transform .input to be the same width as .backgroundimage - 4em
+    // #region Text
+    // Scale Input and Render
     document.querySelector('.input').addEventListener('input', function(e) {
         textUpdate();
     });
 
-    // when .input is clicked set .active on .input and remove .active from .renderedtext
+    // Switch to Edit Mode
     document.querySelector('.input').addEventListener('click', function(e) {
         document.querySelector('.input').classList.add('active');
         document.querySelector('.renderedtext').classList.remove('active');
     });
     
-    // when .input is unselcted remove .active from .input and add .active to .renderedtext
-    document.querySelector('.input').addEventListener('blur', function(e) {
-        document.querySelector('.input').classList.remove('active');
-        document.querySelector('.renderedtext').classList.add('active');
-    
-        renderText();
-    });
-    
-    // when .tint is clicked set .active on .input and remove .active from .renderedtext and set the caret to the end of the input
+    // Switch to Edit Mode
     document.querySelector('.tint').addEventListener('click', function(e) {
         document.querySelector('.input').classList.add('active');
         document.querySelector('.renderedtext').classList.remove('active');
@@ -179,32 +225,44 @@ fetch("language.json")
         sel.removeAllRanges();
         sel.addRange(range);
     });
+    
+    // Switch to Render Mode
+    document.querySelector('.input').addEventListener('blur', function(e) {
+        document.querySelector('.input').classList.remove('active');
+        document.querySelector('.renderedtext').classList.add('active');
+    
+        renderText();
+    });
+    // #endregion
 
-    // when the screen is resized
-    window.addEventListener('resize', function(e) {
-        adjustOnResize();
+    // #region Saving/Loading
+    // Type in Save Name
+    document.getElementById('save_name').addEventListener('input', function(e) {
+        updateSaveName();
     });
 
-    // when #savebutton is clicked
+    // Save Button
     document.getElementById('savebutton').addEventListener('click', function(e) {
         saveSticker(document.getElementById('save_name').value);
     
         updateSaveName();
     });
 
-    // when #save_name is changed
-    document.getElementById('save_name').addEventListener('input', function(e) {
-        updateSaveName();
-    });
-
-    // when #loadbutton is clicked
+    // Load Button
     document.getElementById('loadbutton').addEventListener('click', function(e) {
         loadSticker(document.getElementById('save_name').value);
     
         updateSaveName();
     });
 
-    // when #deletebutton is clicked
+    // Autocomplete
+    autocomplete(document.getElementById("save_name"), Object.keys(localStorage).filter(function(key) {
+        return key.startsWith('Sticker:');
+    }).map(function(key) {
+        return key.slice(8);
+    }));
+
+    // Delete Button
     document.getElementById('deletebutton').addEventListener('click', function(e) {
         // ask if the user wants to delete the sticker
         if (!confirm('Are you sure you want to delete "' + document.getElementById('save_name').value + '"?')) {
@@ -217,6 +275,13 @@ fetch("language.json")
         updateSaveName();
     });
 
+    // Autosave
+    setInterval(function() {
+        saveSticker('temp');
+    }, 30000);
+    // #endregion
+
+    // #region Export
     // Download image
     document.getElementById("downloadbutton").addEventListener("click", function() {
         save_name = document.getElementById('save_name').value;
@@ -237,7 +302,9 @@ fetch("language.json")
         // add render class to #downloadThis
         shareSticker();
     });
+    // #endregion
     
+    // #region Language
     // when #languagebutton is clicked
     document.getElementById('languagebutton').addEventListener('click', function(e) {
         // open #languagemenu
@@ -268,30 +335,46 @@ fetch("language.json")
             displayMessage(translate('--lan_pre--') + element.title + translate('--lan_post--'), "language");
         });
     });
+    // #endregion
 
-    // every 30 seconds save the sticker
-    setInterval(function() {
-        saveSticker('temp');
-    }, 30000);
-
-    // autocomplete for all "Sticker:" keys in localStorage
-    autocomplete(document.getElementById("save_name"), Object.keys(localStorage).filter(function(key) {
-        return key.startsWith('Sticker:');
-    }).map(function(key) {
-        return key.slice(8);
-    }));
+    // #endregion
 });
 
-function setLanguage() {
-    var ihtml = document.body.innerHTML;
-    // replace all occurences of languageJSON[language] keys (marked by --string--) with the values
-    for (var key in languageJSON[language]) {
-        ihtml = ihtml.replace(new RegExp(key, 'g'), languageJSON[language][key]);
+// #region Functions
+
+/** Sets .portrait and .awkward class on body and resizes the sticker */
+function adjustOnResize() {
+
+    // set portrait bool if screen is taller than it is wide
+    var portrait = window.matchMedia("(orientation: portrait)").matches;
+    if (portrait) {
+        document.body.classList.add('portrait');
+    } else {
+        document.body.classList.remove('portrait');
     }
 
-    document.body.innerHTML = ihtml;
+    // set awkward bool if screen is wider than half of the height
+    var awkward = window.innerWidth > window.innerHeight / 5 * 3;
+    if (awkward) {
+        document.body.classList.add('awkward');
+    } else {
+        document.body.classList.remove('awkward');
+    }
+
+    if (mobile && portrait && !awkward) {
+        // adjust .stickerdemo to be the max of 90% of width of the screen or 90% of height of the screen
+        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9) / scale_factor + ')';
+    } else {
+        // adjust .stickerdemo to be the max of 50% of the width of the screen or 50% of the height of the screen
+        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth / 2, window.innerHeight / 2) / scale_factor + ')';
+    }
 }
 
+// #region Utilities
+/** Shows a pop-up to the User
+ * @param {string} message - The message to show
+ * @param {string} icon - The icon to show
+ */
 function displayMessage(message, icon = "") {
     if (icon != "") {
         icon = '<i class="material-icons">' + icon + '</i>';
@@ -305,15 +388,7 @@ function displayMessage(message, icon = "") {
     }, 3000);
 }
 
-function translate(string) {
-    // replace all occurences of languageJSON[language] keys (marked by --string--) with the values
-    for (var key in languageJSON[language]) {
-        string = string.replace(new RegExp(key, 'g'), languageJSON[language][key]);
-    }
-
-    return string;
-}
-
+/** Resets the sticker to its original form by reloading the page and deleting the 'temp' save */
 function newSticker() {
     document.getElementById('save_name').value = "";
     updateSaveName();
@@ -324,21 +399,47 @@ function newSticker() {
     // reload page
     location.reload();
 }
+// #endregion
 
-function loadBackgroundImage(url) {
-    var file = url;
-    var reader = new FileReader();
-    console.log(background_path);
-    reader.onload = function(e) {
-        // set background image
-        document.querySelector('.backgroundimage').style.backgroundImage = 'url(' + e.target.result + ')';
-        //save path to background image
-        background_path = e.target.result;
-        console.log(e.target.result);
-    };
-    reader.readAsDataURL(file);
+// #region Settings
+/** Change the format of the sticker
+ * @param {string} format - The format to change to ("square", "sticker", "story")
+*/
+function setFormat(format) {
+    switch (format) {
+        case 'Square':
+            // change .stickerdemo width and height to 28em
+            document.querySelector('.stickerdemo').style.width = '28em';
+            document.querySelector('.stickerdemo').style.height = '28em';
+            max_ll = 25;
+            max_ll_text = 55;
+            scale_factor = 500;
+            max_lines = 10;
+            break;
+        case 'Sticker':
+            // change .stickerdemo width to 20em and height to 30em
+            document.querySelector('.stickerdemo').style.width = '20em';
+            document.querySelector('.stickerdemo').style.height = '30em';
+            max_ll = 17;
+            max_ll_text = 25;
+            scale_factor = 500;
+            max_lines = 10;
+            break;
+        case 'Story':
+            // change .stickerdemo width to 20em and height to 40em
+            document.querySelector('.stickerdemo').style.width = '20em';
+            document.querySelector('.stickerdemo').style.height = '40em';
+            max_ll = 17;
+            max_ll_text = 25;
+            scale_factor = 650;
+            max_lines = 15;
+            break;
+    }
 }
 
+/** Changes the logo style (Variables in sds-style.css)
+ * @param {string} style - The style to change to ("Classic", "White", "Black")
+ */
 function setLogoStyle(style) {
     switch (style) {
         case 'Classic':
@@ -356,6 +457,9 @@ function setLogoStyle(style) {
     }
 }
 
+/** Changes the corner in which the logo is placed
+ * @param {string} corner - The corner to change to ("Top Left", "Top Right", "Bottom Left", "Bottom Right")
+ */
 function setLogoCorner(corner) {
     logoEl = document.getElementsByClassName('logo')[1];
     switch (corner) {
@@ -385,36 +489,10 @@ function setLogoCorner(corner) {
             break;
     }
 }
+// #endregion
 
-function setFormat(format) {
-    switch (format) {
-        case 'square':
-            // change .stickerdemo width and height to 28em
-            document.querySelector('.stickerdemo').style.width = '28em';
-            document.querySelector('.stickerdemo').style.height = '28em';
-            max_ll = 25;
-            scale_factor = 500;
-            max_lines = 10;
-            break;
-        case 'sticker':
-            // change .stickerdemo width to 20em and height to 30em
-            document.querySelector('.stickerdemo').style.width = '20em';
-            document.querySelector('.stickerdemo').style.height = '30em';
-            max_ll = 17;
-            scale_factor = 500;
-            max_lines = 10;
-            break;
-        case 'story':
-            // change .stickerdemo width to 20em and height to 40em
-            document.querySelector('.stickerdemo').style.width = '20em';
-            document.querySelector('.stickerdemo').style.height = '40em';
-            max_ll = 17;
-            scale_factor = 650;
-            max_lines = 15;
-            break;
-    }
-}
-
+// #region Tint
+/** Make the opacity percentage appear and set a timer to make it disappear again */
 function unhidePercentage() {
     // unhide #opacitypercentage
     document.getElementById('opacitypercentage').style.opacity = 1;
@@ -424,7 +502,10 @@ function unhidePercentage() {
         document.getElementById('opacitypercentage').style.opacity = 0;
     }, 2000);
 }
+// #endregion
 
+// #region Text
+/** Scales .input and .renderedtext if the line overflows */
 function textUpdate() {
     var em = parseFloat(getComputedStyle(document.documentElement).fontSize);
     if (document.querySelector('.input').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 6 * em)) {
@@ -467,6 +548,9 @@ function textUpdate() {
     }
 }
 
+/** Splits the text into lines and adds them to the .renderedtext element.
+ * Passes every line to the handleCommand function and sets the style of the line accordingly.
+ */
 function renderText() {
     // for every line in .input (remove the preceding and trailing whitespace)
     var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
@@ -494,12 +578,12 @@ function renderText() {
             // remove commands %<command> from line
             var rlines = lines[i].replace(regex_cmd, '');
             // if line is too long split it into multiple lines
-            if (rlines.length > max_ll) {
+            if (rlines.length > ((args.search('text') == -1) ? max_ll : max_ll_text)) {
                 var words = lines[i].split(' ');
                 var line = '';
                 for (var j = 0; j < words.length; j++) {
                     // if line is too long (actual size) add a <br>
-                    if (line.replace(regex_cmd, '').length + (regex_cmd.test(words[j]) ? 0 : words[j].length) > max_ll) {
+                    if (line.replace(regex_cmd, '').length + (regex_cmd.test(words[j]) ? 0 : words[j].length) > ((args.search('text') == -1) ? max_ll : max_ll_text)) {
                         // if commands in line
                         if (regex_cmd.test(line)) {
                             args = handleCommands(line);
@@ -511,6 +595,10 @@ function renderText() {
                     }
                     line += words[j] + ' ';
                 }
+                if (line.replace(regex_cmd, '') < line) {
+                    args = handleCommands(line);
+                }
+
                 renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
                 l += 1;
             } else {
@@ -528,6 +616,7 @@ function renderText() {
     document.querySelector('.renderedtext').innerHTML = renderedText;
 }
 
+/** Handles the commands in the line and returns the arguments for the p element */
 function handleCommands(line) {
     var args = '';
     var style = '';
@@ -544,9 +633,7 @@ function handleCommands(line) {
         }
         // if command is #<hex color> set background color to <hex color>
         else if (cmd.match(/#[0-9a-fA-F]{6}/)) {
-            console.log('match');
             style += 'background-color: ' + cmd.slice(0) + ';';
-            console.log(style);
 
             // if color is darker than 50% set text color to white
             if (parseInt(cmd.slice(1), 16) < 8388608) {
@@ -563,45 +650,41 @@ function handleCommands(line) {
         }
         // if command is text set font-family to Open Sans and font-size to 1em
         else if (cmd == 'text') {
-            style += 'font-family: Open-Sans;';
-            style += 'font-size: 0.7em;';
+            args += 'class = "text"';
+        }
+        // if command is right set align self to flex-end
+        else if (cmd == 'right') {
+            style += 'align-self: flex-end;';
         }
     }
     return args + 'style="' + style + '"';
 }
+// #endregion
 
-function adjustOnResize() {
-
-    // set portrait bool if screen is taller than it is wide
-    var portrait = window.matchMedia("(orientation: portrait)").matches;
-    if (portrait) {
-        document.body.classList.add('portrait');
-    } else {
-        document.body.classList.remove('portrait');
-    }
-
-    // set awkward bool if screen is wider than half of the height
-    var awkward = window.innerWidth > window.innerHeight / 5 * 3;
-    if (awkward) {
-        document.body.classList.add('awkward');
-    } else {
-        document.body.classList.remove('awkward');
-    }
-
-    if (mobile && portrait && !awkward) {
-        // adjust .stickerdemo to be the max of 90% of width of the screen or 90% of height of the screen
-        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9) / scale_factor + ')';
-    } else {
-        // adjust .stickerdemo to be the max of 50% of the width of the screen or 50% of the height of the screen
-        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth / 2, window.innerHeight / 2) / scale_factor + ')';
-    }
+// #region Saving/Loading
+/** 
+ * Opens the url and sets the image as background image.
+ * @param {string} url - The url of the image.
+ */
+function loadBackgroundImage(url) {
+    var file = url;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        // set background image
+        document.querySelector('.backgroundimage').style.backgroundImage = 'url(' + e.target.result + ')';
+        //save path to background image
+        background_path = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
+/**
+ * Saves the sticker to localStorage ("Sticker:<save_name>").
+ * @param {string} save_name - The name of the sticker (if this is 'temp' the sticker will be saved as autosave and loaded on reload).
+ */
 function saveSticker(save_name) {
     if (save_name == 'temp') {
         settings = packSettings();
-
-        console.log(settings);
 
         // save the settings
         localStorage.setItem(save_name, JSON.stringify(settings));
@@ -617,13 +700,44 @@ function saveSticker(save_name) {
 
         settings = packSettings();
 
-        console.log(settings);
-
         // save the settings
         localStorage.setItem('Sticker:' + save_name, JSON.stringify(settings));
     }
 }
 
+/**
+ * Loads the sticker from localStorage ("Sticker:<save_name>").
+ * @param {string} save_name - The name of the sticker (if this is 'temp' the sticker will be loaded from autosave).
+ */
+function loadSticker(save_name) {
+    if (save_name == 'temp') {
+        if (localStorage.getItem(save_name) == null) {
+            // if the save_name doesn't exist, do nothing
+            return;
+        }
+        // get the settings from localStorage
+        var settings = JSON.parse(localStorage.getItem(save_name));
+
+        unpackSettings(settings);
+    } else {
+        if (localStorage.getItem('Sticker:' + save_name) == null) {
+            // if the save_name doesn't exist, do nothing
+            return;
+        }
+        // get the settings from localStorage
+        var settings = JSON.parse(localStorage.getItem('Sticker:' + save_name));
+
+        unpackSettings(settings);
+
+        // load the image from background_path
+        displayMessage(translate('--ld_pre--') + save_name + translate('--ld_post--'), "folder_open");
+    }
+}
+
+/**
+ * Packs all the settings into an object.
+ * @returns {object} The settings.
+ */
 function packSettings() {
     var text = document.querySelector('.input').innerHTML;
     // replace the linebreaks (<br>) with a %lbr% so it can be saved in localstorage
@@ -642,6 +756,10 @@ function packSettings() {
     };
 }
 
+/**
+ * Unpacks the settings from an object and applies them.
+ * @param {object} settings - The settings.
+ */
 function unpackSettings(settings) {
     // set the settings
     var text = settings.text;
@@ -675,6 +793,7 @@ function unpackSettings(settings) {
     setFormat(settings.format);
 }
 
+// ! NOT IN USE
 function createLink() {
     // get the current settings
     settings = packSettings();
@@ -689,6 +808,7 @@ function createLink() {
     return link;
 }
 
+// ! NOT IN USE
 function settingsFromLink(link) {
     // get the settings from the url
     var url = new URL(link);
@@ -700,6 +820,10 @@ function settingsFromLink(link) {
     return settings;
 }
 
+/**
+ * Saves save_name to localStorage.
+ * enables and disables save/load/delete buttons.
+ */
 function updateSaveName() {
     // save save_name to localStorage
     localStorage.setItem('save_name', document.getElementById('save_name').value);
@@ -727,33 +851,10 @@ function updateSaveName() {
     }
 }
 
-function loadSticker(save_name) {
-    if (save_name == 'temp') {
-        if (localStorage.getItem(save_name) == null) {
-            // if the save_name doesn't exist, do nothing
-            return;
-        }
-        // get the settings from localStorage
-        var settings = JSON.parse(localStorage.getItem(save_name));
-        console.log(settings);
-
-        unpackSettings(settings);
-    } else {
-        if (localStorage.getItem('Sticker:' + save_name) == null) {
-            // if the save_name doesn't exist, do nothing
-            return;
-        }
-        // get the settings from localStorage
-        var settings = JSON.parse(localStorage.getItem('Sticker:' + save_name));
-        console.log(settings);
-
-        unpackSettings(settings);
-
-        // load the image from background_path
-        displayMessage(translate('--ld_pre--') + save_name + translate('--ld_post--'), "folder_open");
-    }
-}
-
+/**
+ * Deletes save_name from localStorage.
+ * Reloads the page using newSticker().
+ */
 function deleteSticker(save_name) {
     // delete the save from localStorage
     localStorage.removeItem('Sticker:' + save_name);
@@ -761,54 +862,7 @@ function deleteSticker(save_name) {
     newSticker();
 }
 
-function saveAs(uri, background_path) {
-
-    var link = document.createElement('a');
-
-    if (typeof link.download === 'string') {
-        link.href = uri;
-        link.download = background_path;
-
-        //Firefox requires the link to be in the body
-        document.body.appendChild(link);
-
-        //simulate click
-        link.click();
-
-        //remove the link when done
-        document.body.removeChild(link);
-    } else {
-        window.open(uri);
-    }
-}
-
-function shareSticker() {
-    save_name = document.getElementById('save_name').value;
-
-    const filesArray = [];
-
-    var node = document.getElementById('downloadThis');
-
-    html2canvas(node).then(function(canvas) {
-        // put into filesArray
-        const response = fetch(canvas.toDataURL())
-        .then(response => response.blob())
-        .then(blob => {
-            const file = new File([blob], save_name + '.png', {type: 'image/png'});
-            filesArray.push(file);
-
-            // open share dialog
-            if (navigator.share) {
-                navigator.share({
-                    title: save_name,
-                    files: filesArray,
-                }).catch(console.error);
-                displayMessage(translate('--shrng--'), "share");
-            }
-        });
-    });
-}
-
+/** See https://www.w3schools.com/howto/howto_js_autocomplete.asp */
 function autocomplete(inp, arr) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
@@ -914,3 +968,91 @@ function autocomplete(inp, arr) {
       closeAllLists(e.target);
   });
 }
+// #endregion
+
+// #region Export
+/** Opens navigation.share in supported browsers and gives it the rendered image as a blob */
+function shareSticker() {
+    save_name = document.getElementById('save_name').value;
+
+    const filesArray = [];
+
+    var node = document.getElementById('downloadThis');
+
+    html2canvas(node).then(function(canvas) {
+        // put into filesArray
+        fetch(canvas.toDataURL())
+        .then(response => response.blob())
+        .then(blob => {
+            const file = new File([blob], save_name + '.png', {type: 'image/png'});
+            filesArray.push(file);
+
+            // open share dialog
+            if (navigator.share) {
+                navigator.share({
+                    title: save_name,
+                    files: filesArray,
+                }).catch(console.error);
+                displayMessage(translate('--shrng--'), "share");
+            }
+        });
+    });
+}
+
+/**
+ * Saves the rendered image to the users device
+ * @param {string} uri - Data URL of the image
+ * @param {string} filename - Name of the file
+ */
+function saveAs(uri, background_path) {
+
+    var link = document.createElement('a');
+
+    if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = background_path;
+
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link);
+
+        //simulate click
+        link.click();
+
+        //remove the link when done
+        document.body.removeChild(link);
+    } else {
+        window.open(uri);
+    }
+}
+// #endregion
+
+// #region Language
+/**
+ * Replaces tokens --token-- with the corresponding translation.
+ */
+function setLanguage() {
+    var ihtml = document.body.innerHTML;
+    // replace all occurences of languageJSON[language] keys (marked by --string--) with the values
+    for (var key in languageJSON[language]) {
+        ihtml = ihtml.replace(new RegExp(key, 'g'), languageJSON[language][key]);
+    }
+
+    document.body.innerHTML = ihtml;
+}
+
+/**
+ * Replaces tokens --token-- with the corresponding translation. (JavaScript code)
+ * @param {string} string - String to translate
+ * @returns {string} Translated string
+ */
+function translate(string) {
+    // replace all occurences of languageJSON[language] keys (marked by --string--) with the values
+    for (var key in languageJSON[language]) {
+        string = string.replace(new RegExp(key, 'g'), languageJSON[language][key]);
+    }
+
+    return string;
+}
+// #endregion
+
+// #endregion

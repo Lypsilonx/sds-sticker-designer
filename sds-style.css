@@ -1,12 +1,12 @@
+/* ------------------------ Variables ------------------------ */
+/* #region Variables */
 :root {
   --sds-logo-color-middle: #ffffff;
   --sds-logo-color: #ffffff;
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
     --main-bg-color: #161616;
-
     --sds-color-1: #00bba4;
     --sds-color-2: #c6d53a;
     --sds-accent-1: #2d0a41;
@@ -15,11 +15,9 @@
     --sds-color-font: white;
   }
 }
-
 @media (prefers-color-scheme: light) {
   :root {
     --main-bg-color: white;
-
     --sds-color-1: #2d0a41;
     --sds-color-2: #b1003a;
     --sds-accent-1: #00bba4;
@@ -28,74 +26,50 @@
     --sds-color-font: #161616;
   }
 }
-
+/* #endregion */
+/* -------------------------- Fonts -------------------------- */
+/* #region Fonts */
 @font-face {
   font-family: Bitter;
   src: url(../fonts/Bitter-Bold.ttf);
 }
-
 @font-face {
   font-family: Open-Sans;
   src: url(../fonts/OpenSans-Regular.ttf);
 }
-
 @font-face {
   font-family: Open-Sans-Bold;
   src: url(../fonts/OpenSans-Bold.ttf);
 }
-
+/* #endregion */
+/* ------------------------- General ------------------------- */
+/* #region General */
 * {
   font-family: "Open-Sans-Bold";
   font-weight: bold;
 }
-
 html {
   color: var(--sds-color-font);
   height: 100%;
 }
-
 body {
   background-color: var(--main-bg-color);
   margin: 0;
   width: 100%;
   height: 100%;
-
   /* disable scrolling */
   overflow: hidden;
 }
-
 p {
   margin: 0;
   padding: 0;
 }
-
-#messageboard {
-  position: absolute;
-  padding-left: 1em;
-  padding-right: 1em;
-  bottom: 1em;
-  opacity: 1;
-  right: 1em;
-  height: 4em;
-  overflow: hidden;
-  background-color: var(--main-bg-color);
-  box-shadow: 0 0 1em var(--sds-color-shadow);
-  z-index: 100;
-  text-align: center;
-  align-items: center;
-  justify-content: space-between;
-  width: 40%;
-
-  /* animate comig up */
-  transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out;
+div {
+  display: flex;
+  justify-content: center;
+  /* Space between elements */
+  margin: 0.5em;
 }
-
-#messageboard.hidden {
-  /* transform: translateY(7em); */
-  bottom: -7em;
-  opacity: 0;
-}
-
 footer {
   position: relative;
   bottom: 0;
@@ -112,73 +86,6 @@ footer {
   /* order vertically */
   flex-direction: column;
 }
-
-.no-js footer {
-  position: absolute;
-  bottom: 0;
-}
-
-.no-js form:has(.stickerdemo) {
-  display: none;
-}
-
-.no-js #downloadfield {
-  display: none;
-}
-
-.no-js footer {
-  bottom: 5%;
-}
-
-.no-js div:has(#savebutton),
-.no-js div:has(#languagebutton) {
-  display: none;
-}
-
-#languagemenu {
-  display: none;
-  padding: 0;
-  margin: 0;
-}
-
-#languagemenu.open {
-  display: block;
-}
-
-#languagemenu a {
-  padding: 0.5em;
-  margin: 0;
-  font-size: 1em;
-  width: calc(100% - 1em);
-  text-decoration: none;
-  color: var(--sds-color-font);
-}
-
-.language {
-  display: flex;
-  flex-direction: column;
-}
-
-#no-js-msg {
-  display: none;
-  text-align: center;
-  font-size: 1.5em;
-  position: relative;
-  top: 50%;
-  margin: 0;
-}
-
-.no-js #no-js-msg {
-  display: inherit;
-}
-
-.no-js body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
 h1 {
   font-size: 2em;
   margin: 0;
@@ -188,59 +95,114 @@ h1 {
   left: 1em;
   font-family: "Bitter";
 }
-
-input[type="submit"],
-a {
-  border: none;
-  font-size: 1.5em;
-  color: var(--sds-color-font);
-  background-color: var(--sds-color-2);
-  text-decoration: none;
-  cursor: pointer;
-  height: 2em;
+::-webkit-scrollbar {
+  width: 0px;
+}
+/* #endregion */
+/* ---------------------- Messageboard ----------------------- */
+/* #region Messageboard */
+#messageboard {
+  position: absolute;
   padding-left: 1em;
   padding-right: 1em;
-  margin: 0.5em;
-
-  /* align elements in middle */
-  display: flex;
-  justify-content: space-around;
+  bottom: 1em;
+  opacity: 1;
+  right: 1em;
+  height: 4em;
+  overflow: hidden;
+  background-color: var(--main-bg-color);
+  box-shadow: 0 0 1em var(--sds-color-shadow);
+  z-index: 100;
+  text-align: center;
   align-items: center;
-}
+  justify-content: space-between;
+  width: 40%;
+  /* animate comig up */
+  transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out;
 
-input[type="file"] {
+  &.hidden {
+    bottom: -4em;
+    opacity: 0;
+  }
+}
+#messageboard.hidden {
+  /* transform: translateY(7em);
+	*/
+  bottom: -7em;
+  opacity: 0;
+}
+/* #endregion */
+/* -------------------------- NO JS -------------------------- */
+/* #region NO JS */
+.no-js footer {
+  position: absolute;
+  bottom: 0;
+}
+.no-js form:has(.stickerdemo) {
+  display: none;
+}
+.no-js #downloadfield {
+  display: none;
+}
+.no-js footer {
+  bottom: 5%;
+}
+.no-js div:has(#savebutton, #languagebutton) {
+  display: none;
+}
+#no-js-msg {
+  display: none;
+  text-align: center;
   font-size: 1.5em;
-  align-self: center;
+  position: relative;
+  top: 50%;
+  margin: 0;
+}
+.no-js #no-js-msg {
+  display: inherit;
+}
+.no-js body {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  width: 3.5em;
-  height: 3.5em;
-  padding: 0;
-  margin-top: 0.5em;
 }
-
-#savebutton {
+/* #endregion */
+/* ---------------------- Language Menu ---------------------- */
+/* #region Language Menu */
+#languagemenu {
+  display: none;
+  padding: 0;
+  margin: 0;
+}
+#languagemenu.open {
+  display: block;
+}
+#languagemenu a {
+  padding: 0.5em;
+  margin: 0;
+  font-size: 1em;
+  width: calc(100% - 1em);
+  text-decoration: none;
+  color: var(--sds-color-font);
+}
+.language {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 1em var(--sds-color-shadow);
+}
+/* #endregion */
+/* ------------------------ Save/Load ------------------------ */
+/* #region Save/Load */
+#savebutton,
+#languagebutton,
+#loadbutton,
+#deletebutton {
   width: 2em;
   height: 2em;
   margin: 0;
   padding: 0;
 }
-
-#languagebutton {
-  width: 2em;
-  height: 2em;
-  margin: 0;
-  padding: 0;
-}
-
-#loadbutton {
-  width: 2em;
-  height: 2em;
-  margin: 0;
-  padding: 0;
-}
-
 #bugbutton {
   width: 1em;
   height: 1em;
@@ -251,34 +213,18 @@ input[type="file"] {
   bottom: 0;
   position: absolute;
 }
-
-#deletebutton {
-  width: 2em;
-  height: 2em;
-  margin: 0;
-  padding: 0;
-}
-
-div:has(#savebutton),
-div:has(#languagebutton) {
+div:has(#savebutton, #languagebutton) {
   position: absolute;
   top: 1em;
   margin: 0;
 }
-
 div:has(#savebutton) {
   box-shadow: 0 0 1em var(--sds-color-shadow);
   right: 1em;
 }
-
 div:has(#languagebutton) {
   left: 1em;
 }
-
-.language {
-  box-shadow: 0 0 1em var(--sds-color-shadow);
-}
-
 #save_name {
   border: 0.5em solid var(--sds-color-2);
   padding: 0.2em;
@@ -288,28 +234,28 @@ div:has(#languagebutton) {
   margin: 0;
   position: relative;
 }
-
+/* #endregion */
+/* ---------------------- Autocomplete ----------------------- */
+/* #region Autocomplete */
 .autocomplete {
-  /*the container must be positioned relative:*/
+  /*the container must be positioned relative: */
   position: relative;
   display: inline-block;
   margin: 0;
   width: 9.4em;
 }
-
 .autocomplete-items {
   position: absolute;
   border: 1px solid var(--sds-color-font);
   border-bottom: none;
   border-top: none;
   z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
+  /*position the autocomplete items to be the same width as the container: */
   top: 100%;
   left: 0;
   right: 0;
   margin: 0;
 }
-
 .autocomplete-items div {
   padding: 10px;
   cursor: pointer;
@@ -318,17 +264,18 @@ div:has(#languagebutton) {
   margin: 0;
   width: 100%;
 }
-
 .autocomplete-items div:hover {
-  /*when hovering an item:*/
+  /*when hovering an item: */
   background-color: var(--sds-color-font);
 }
 .autocomplete-active {
-  /*when navigating through the items using the arrow keys:*/
+  /*when navigating through the items using the arrow keys: */
   background-color: var(--sds-color-2) !important;
   color: var(--sds-color-font);
 }
-
+/* #endregion */
+/* --------------------- Download/Share ---------------------- */
+/* #region Download/Share */
 #downloadfield {
   width: 100%;
   height: 3em;
@@ -339,7 +286,6 @@ div:has(#languagebutton) {
   justify-content: center;
   align-items: center;
 }
-
 #downloadbutton {
   width: 30%;
   margin: 0;
@@ -350,11 +296,12 @@ div:has(#languagebutton) {
   box-shadow: 0 0 1em var(--sds-color-shadow);
   z-index: 2;
 }
-
 #sharebutton {
   box-shadow: 0 0 1em var(--sds-color-shadow);
 }
-
+/* #endregion */
+/* ------------------------ Settings ------------------------- */
+/* #region Settings */
 #settingsfield {
   margin: 0;
   position: absolute;
@@ -367,11 +314,14 @@ div:has(#languagebutton) {
   z-index: 2;
   border-radius: 2em;
 }
-
 #settingsfield * {
   flex-direction: column;
 }
-
+/* #endregion */
+/* -------------------------- Logos -------------------------- */
+/* #region Logos */
+/* PD Logo */
+/* #region PD Logo */
 #pdlogocontainer {
   position: relative;
   transition: transform 0.5s ease-in-out;
@@ -379,24 +329,20 @@ div:has(#languagebutton) {
   z-index: 2;
   background-color: transparent;
 }
-
 #pdlogocontainer:hover {
   transform: translateX(-7em);
 }
-
 #pdlogocontainer p {
   position: absolute;
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
   opacity: 0;
   transform: translateX(-7em);
 }
-
 #pdlogocontainer:hover p {
   max-width: 100%;
   transform: translateX(7em);
   opacity: 1;
 }
-
 .smalllogo {
   position: relative;
   width: 2.5em;
@@ -407,7 +353,6 @@ div:has(#languagebutton) {
   margin: -1em;
   transform: scale(0.5);
 }
-
 .smalllogo h2 {
   bottom: -0.45em;
   left: 0em;
@@ -417,7 +362,6 @@ div:has(#languagebutton) {
   color: #161616;
   font-family: "Menlo", monospace;
 }
-
 .smalllogo h2 ~ h2 {
   bottom: -1em;
   left: 0.25em;
@@ -426,20 +370,20 @@ div:has(#languagebutton) {
   color: #e02068;
   text-align: center;
 }
-
+/* #endregion */
+/* SDS Logo */
+/* #region SDS Logo */
 .logo {
   position: absolute;
   bottom: 0;
   right: 0;
   flex-direction: column;
 }
-
 .logo div {
   margin: 0;
   padding: 0;
   justify-content: left;
 }
-
 /* first div in .logo */
 .logo > div {
   font-family: "Open-Sans-Bold";
@@ -450,11 +394,9 @@ div:has(#languagebutton) {
   text-transform: uppercase;
   color: var(--sds-logo-color);
 }
-
 #title > .logo > div {
   color: var(--sds-color-font);
 }
-
 /* second div in .logo */
 .logo > div ~ div {
   font-family: "Bitter";
@@ -463,27 +405,22 @@ div:has(#languagebutton) {
   margin-left: -0.05em;
   /* all caps */
   text-transform: uppercase;
-
   margin-top: -0.25em;
   margin-bottom: -0.13em;
   color: var(--sds-logo-color-middle);
 }
-
 #title > .logo > div ~ div {
   color: var(--sds-color-font);
 }
-
 /* third div in .logo */
 .logo > div ~ div ~ div {
   font-family: "Open-Sans-Bold";
   font-size: 0.5em;
   color: var(--sds-logo-color);
 }
-
 #title > .logo > div ~ div ~ div {
   color: var(--sds-color-font);
 }
-
 #title {
   display: flex;
   flex-direction: row;
@@ -493,7 +430,6 @@ div:has(#languagebutton) {
   align-items: center;
   justify-content: center;
 }
-
 #title .logo {
   margin: 0;
   bottom: auto;
@@ -501,11 +437,19 @@ div:has(#languagebutton) {
   top: 2em;
   transform: scale(1.5);
 }
-
-::-webkit-scrollbar {
-  width: 0px;
+/* #endregion */
+/* #endregion */
+/* -------------------------- Forms -------------------------- */
+/* #region Forms */
+form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: calc(100% - 8em);
 }
-
 input[type="color"] {
   border: none;
   font-size: 1.5em;
@@ -514,11 +458,37 @@ input[type="color"] {
   margin: 0;
   padding: 0;
 }
-
+input[type="submit"],
+a {
+  border: none;
+  font-size: 1.5em;
+  color: var(--sds-color-font);
+  background-color: var(--sds-color-2);
+  text-decoration: none;
+  cursor: pointer;
+  height: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin: 0.5em;
+  /* align elements in middle */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+input[type="file"] {
+  font-size: 1.5em;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3.5em;
+  height: 3.5em;
+  padding: 0;
+  margin-top: 0.5em;
+}
 input::-webkit-color-swatch-wrapper {
   padding: 0;
 }
-
 .cpframe {
   align-self: center;
   display: flex;
@@ -529,42 +499,23 @@ input::-webkit-color-swatch-wrapper {
   height: 3.5em;
   padding: 0;
 }
-
 .cptag {
   align-self: center;
   display: flex;
   width: 8em;
   text-align: center;
 }
-
-div {
-  display: flex;
-  justify-content: center;
-
-  /* Space between elements */
-  margin: 0.5em;
-}
-
-form {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-  height: calc(100% - 8em);
-}
-
+/* #endregion */
+/* ------------------------- Sticker ------------------------- */
+/* #region Sticker */
 .stickerdemo {
   background-color: white;
   width: 28em;
   height: 28em;
   position: absolute;
-
   margin: 0;
   box-shadow: var(--sds-color-shadow) 0em 0em 1em 0.2em;
 }
-
 .stickerdemo #opacitypercentage {
   width: 100%;
   height: 100%;
@@ -575,27 +526,22 @@ form {
   color: var(--sds-color-font);
   z-index: 1;
   opacity: 0%;
-
   /* animate opacity */
   animation: opacity 2s infinite;
 }
-
 .backgroundimage {
   background-image: url(tree.jpeg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-
   width: 100%;
   height: 100%;
   position: relative;
   margin: 0;
   top: 0;
   left: 0;
-
   display: unset;
 }
-
 .tint {
   background-color: #b1003a;
   opacity: 0.5;
@@ -609,7 +555,6 @@ form {
   justify-content: center;
   align-items: center;
 }
-
 .input {
   opacity: 0%;
   display: inline;
@@ -622,14 +567,11 @@ form {
   max-width: calc(200% - 5em);
   max-height: calc(200% - 5em);
   overflow: clip;
-
   /* break words when over max-width */
   word-wrap: break-word;
-
   color: white;
   font-size: 2.5em;
   transform: scale(0.5);
-
   top: 0;
   left: 0;
   display: table;
@@ -638,10 +580,8 @@ form {
   padding-left: 0.5em;
   padding-right: 0.5em;
   transform-origin: top left;
-
   z-index: 1;
 }
-
 .renderedtext {
   /* not selectable */
   -webkit-touch-callout: none;
@@ -651,49 +591,45 @@ form {
   -ms-user-select: none;
   user-select: none;
   pointer-events: none;
-
   opacity: 0%;
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   position: absolute;
   margin: 1em;
   width: calc(200% - 5em);
-
   color: white;
   font-size: 2.5em;
   transform: scale(0.5);
-
   top: 0;
   left: 0;
-  display: table;
   transform-origin: top left;
-
   z-index: 1;
 }
-
 .renderedtext > p {
   display: table;
   margin: 0;
-
   background-color: black;
   padding: 0.2em;
   padding-left: 0.5em;
   padding-right: 0.5em;
   transform-origin: top left;
 }
-
+.renderedtext > p.text {
+  font-family: Open-Sans;
+  font-size: 0.7em;
+}
 .input.active {
   opacity: 100%;
 }
-
 .renderedtext.active {
   opacity: 100%;
 }
-
-/* ------------------ Mobile ------------------ */
-
+/* #endregion */
+/* --------------------- Mobile/Scaling ---------------------- */
+/* #region Mobile/Scaling */
+/* Portrait */
+/* #region Portrait */
 .mobile.portrait #settingsfield {
   flex-direction: row;
   left: calc(50% - 21em);
@@ -703,27 +639,21 @@ form {
   bottom: 17%;
   transform: scale(1.2);
 }
-
-.mobile.portrait div:has(#savebutton),
-.mobile.portrait div:has(#languagebutton) {
+.mobile.portrait div:has(#savebutton, #languagebutton) {
   top: 17%;
   align-items: center;
   justify-content: center;
 }
-
 .mobile.portrait div:has(#savebutton) {
   right: 25%;
 }
-
 .mobile.portrait div:has(#languagebutton) {
   left: 25%;
 }
-
 .mobile.portrait #title .logo {
   transform: scale(3);
   top: 8em;
 }
-
 .mobile.portrait #downloadfield {
   height: 4em;
   margin: 0;
@@ -733,7 +663,9 @@ form {
   justify-content: center;
   align-items: center;
 }
-
+/* #endregion */
+/* Awkward */
+/* #region Awkward */
 .portrait.awkward #settingsfield {
   flex-direction: column;
   top: calc(50% - 21em);
@@ -743,28 +675,22 @@ form {
   left: 5%;
   transform: scale(0.8);
 }
-
-.portrait.awkward div:has(#savebutton),
-.portrait.awkward div:has(#languagebutton) {
+.portrait.awkward div:has(#savebutton, #languagebutton) {
   top: 5%;
   align-items: center;
   justify-content: center;
 }
-
 .portrait.awkward div:has(#savebutton) {
   right: 0;
 }
-
 .portrait.awkward div:has(#languagebutton) {
   left: 0;
 }
-
 .portrait.awkward #title .logo {
   transform: scale(2);
   top: 40%;
   left: 5%;
 }
-
 .portrait.awkward #downloadfield {
   height: 4em;
   margin: 0;
@@ -774,3 +700,5 @@ form {
   justify-content: center;
   align-items: center;
 }
+/* #endregion */
+/* #endregion */

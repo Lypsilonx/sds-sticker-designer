@@ -71,9 +71,9 @@ session_start();
             <div class="cptag">
                 <p>--frm--</p>
                 <select name="format" id="format" title="--frmt--">
-                    <option value="square" selected>--sqr--</option>
-                    <option value="sticker">--stck--</option>
-                    <option value="story">--stry--</option>
+                    <option value="Square" selected>--sqr--</option>
+                    <option value="Sticker">--stck--</option>
+                    <option value="Story">--stry--</option>
                 </select>
             </div>
             <div class="cptag">
