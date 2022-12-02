@@ -375,6 +375,7 @@ div:has(#languagebutton) {
   bottom: 0;
   right: 0;
   flex-direction: column;
+  width: 5em;
 }
 .logo div {
   margin: 0;

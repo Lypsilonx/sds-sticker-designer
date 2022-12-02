@@ -492,6 +492,12 @@ function setLogoCorner(corner) {
             logoEl.style.bottom = '0';
             logoEl.style.right = '0';
             break;
+        case 'Bottom Center':
+            logoEl.style.top = 'auto';
+            logoEl.style.left = 'calc(50% - 2.5em)';
+            logoEl.style.bottom = '0';
+            logoEl.style.right = 'auto';
+            break;
     }
 }
 // #endregion

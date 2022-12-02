@@ -87,10 +87,15 @@ session_start();
             <div class="cptag">
                 <p>--lgc--</p>
                 <select name="logo_corner" id="logo_corner" title="--cort--">
-                    <option value="Top Right">--tr--</option>
-                    <option value="Bottom Right" selected>--br--</option>
-                    <option value="Top Left">--tl--</option>
-                    <option value="Bottom Left">--bl--</option>
+                    <optgroup label="--t--">
+                        <option value="Top Left">--tl--</option>
+                        <option value="Top Right">--tr--</option>
+                    </optgroup>
+                    <optgroup label="--b--">
+                        <option value="Bottom Left">--bl--</option>
+                        <option value="Bottom Center">--bc--</option>
+                        <option value="Bottom Right" selected>--br--</option>
+                    </optgroup>
                 </select>
             </div>
             <div class="cptag">
