@@ -297,17 +297,7 @@ fetch("language.json")
     // #region Export
     // Download image
     document.getElementById("downloadbutton").addEventListener("click", function() {
-        save_name = document.getElementById('save_name').value;
-    
-        displayMessage(translate('--dwld--'), "download");
-        // add render class to #downloadThis
-        document.getElementById('downloadThis').classList.add('render');
-    
-        var node = document.getElementById('downloadThis');
-    
-        html2canvas(node).then(function(canvas) {
-            saveAs(canvas.toDataURL(), save_name + '.png');
-        });
+        downloadSticker();
     });
 
     // share image
@@ -1018,18 +1008,39 @@ function shareSticker() {
     });
 }
 
+/** Renders the Image and calls saveAs() */
+function downloadSticker() {
+    save_name = document.getElementById('save_name').value;
+    
+    displayMessage(translate('--dwld--'), "download");
+
+    var node = document.getElementById('downloadThis');
+
+    // Cropping context
+    let cropper = document.createElement('canvas').getContext('2d');
+
+    html2canvas(node).then(function(canvas) {
+        // Crop Image
+        cropper.canvas.width = canvas.width - 1;
+        cropper.canvas.height = canvas.height - 1;
+        cropper.drawImage(canvas, 0, 0);
+        // Save the cropped image
+        saveAs(cropper.canvas.toDataURL(), save_name + '.png');
+    });
+}
+
 /**
  * Saves the rendered image to the users device
- * @param {string} uri - Data URL of the image
+ * @param {string} url - Data URL of the image
  * @param {string} filename - Name of the file
  */
-function saveAs(uri, background_path) {
+function saveAs(url, filename) {
 
     var link = document.createElement('a');
 
     if (typeof link.download === 'string') {
-        link.href = uri;
-        link.download = background_path;
+        link.href = url;
+        link.download = filename;
 
         //Firefox requires the link to be in the body
         document.body.appendChild(link);
@@ -1040,7 +1051,7 @@ function saveAs(uri, background_path) {
         //remove the link when done
         document.body.removeChild(link);
     } else {
-        window.open(uri);
+        window.open(url);
     }
 }
 // #endregion
