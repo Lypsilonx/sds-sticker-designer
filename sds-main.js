@@ -117,6 +117,15 @@ fetch("language.json")
     
             newSticker();
         }
+
+        // when ctrl+z is pressed
+        if (e.key === 'z' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+            console.log('undo');
+
+            // ! DOES NOT WORK (Have to click off the sticker)
+            // Render Text
+            renderText();
+        }
     });
 
     // Screen Resize
@@ -230,7 +239,11 @@ fetch("language.json")
     document.querySelector('.input').addEventListener('blur', function(e) {
         document.querySelector('.input').classList.remove('active');
         document.querySelector('.renderedtext').classList.add('active');
+
+        // Autosave
+        saveSticker('temp');
     
+        // Render Text
         renderText();
     });
     // #endregion
@@ -647,6 +660,8 @@ function handleCommands(line) {
         // if command is small set scale to 0.8
         else if (cmd == 'small') {
             style += 'transform: scale(0.8);';
+            //set top and bottom margins to -1%
+            style += 'margin-top: -0.8%; margin-bottom: -0.8%;';
         }
         // if command is text set font-family to Open Sans and font-size to 1em
         else if (cmd == 'text') {
