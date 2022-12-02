@@ -113,7 +113,7 @@ session_start();
                     <div id="opacitypercentage">50%</div>
                 </div>
                 <div class="input" contenteditable="true" onPaste="" onkeydown="" title="--clktxt--">
-                    Dein Spruch...</div>
+                    §command$Dein Spruch...</div>
                 <div class="renderedtext active">
                     <p>Dein Spruch...</p>
                 </div>
