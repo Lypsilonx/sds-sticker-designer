@@ -988,9 +988,16 @@ function shareSticker() {
 
     var node = document.getElementById('downloadThis');
 
+    // Cropping context
+    let cropper = document.createElement('canvas').getContext('2d');
+
     html2canvas(node).then(function(canvas) {
+        // Crop Image
+        cropper.canvas.width = canvas.width - 1;
+        cropper.canvas.height = canvas.height - 1;
+        cropper.drawImage(canvas, 0, 0);
         // put into filesArray
-        fetch(canvas.toDataURL())
+        fetch(cropper.canvas.toDataURL())
         .then(response => response.blob())
         .then(blob => {
             const file = new File([blob], save_name + '.png', {type: 'image/png'});
