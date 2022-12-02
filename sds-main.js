@@ -1006,10 +1006,10 @@ function shareSticker() {
     // Cropping context
     let cropper = document.createElement('canvas').getContext('2d');
 
-    html2canvas(node).then(function(canvas) {
+    html2canvas(node, {scale: 4}).then(function(canvas) {
         // Crop Image
-        cropper.canvas.width = canvas.width - 2;
-        cropper.canvas.height = canvas.height - 2;
+        cropper.canvas.width = canvas.width - 4;
+        cropper.canvas.height = canvas.height - 4;
         cropper.drawImage(canvas, 0, 0);
         // put into filesArray
         fetch(cropper.canvas.toDataURL())
@@ -1041,10 +1041,10 @@ function downloadSticker() {
     // Cropping context
     let cropper = document.createElement('canvas').getContext('2d');
 
-    html2canvas(node).then(function(canvas) {
+    html2canvas(node, {scale: 4}).then(function(canvas) {
         // Crop Image
-        cropper.canvas.width = canvas.width - 2;
-        cropper.canvas.height = canvas.height - 2;
+        cropper.canvas.width = canvas.width - 4;
+        cropper.canvas.height = canvas.height - 4;
         cropper.drawImage(canvas, 0, 0);
         // Save the cropped image
         saveAs(cropper.canvas.toDataURL(), save_name + '.png');
