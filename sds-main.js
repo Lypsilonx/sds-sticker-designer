@@ -430,9 +430,9 @@ function setFormat(format) {
             break;
         case 'Story':
             // change .stickerdemo width to 20em and height to 40em
-            document.querySelector('.stickerdemo').style.width = '20em';
-            document.querySelector('.stickerdemo').style.height = '40em';
-            max_ll = 17;
+            document.querySelector('.stickerdemo').style.width = 0.278 * 1080 + 'px';
+            document.querySelector('.stickerdemo').style.height = 0.278 * 1920 + 'px';
+            max_ll = 16;
             max_ll_text = 25;
             scale_factor = 650;
             max_lines = 15;
