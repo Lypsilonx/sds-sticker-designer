@@ -438,6 +438,8 @@ function setFormat(format) {
             max_lines = 15;
             break;
     }
+
+    renderText();
 }
 
 /** Changes the logo style (Variables in sds-style.css)
@@ -650,8 +652,15 @@ function handleCommands(line) {
         // if command is small set scale to 0.8
         else if (cmd == 'small') {
             style += 'transform: scale(0.8);';
-            //set top and bottom margins to -1%
-            style += 'margin-top: -0.8%; margin-bottom: -0.8%;';
+
+            // if format is square
+            if (document.getElementById('format').value == 'Square') {
+                //set top and bottom margins to -0.8% (and accord for 1px gap)
+                style += 'margin-top: calc(-0.8% - 1px); margin-bottom: calc(-0.8% - 1px);';
+            } else {
+                //set top and bottom margins to -0.8%
+                style += 'margin-top: calc(-0.8% - 2.5px); margin-bottom: calc(-0.8% - 4.8px);';
+            }
         }
         // if command is text set font-family to Open Sans and font-size to 1em
         else if (cmd == 'text') {
