@@ -993,8 +993,8 @@ function shareSticker() {
 
     html2canvas(node).then(function(canvas) {
         // Crop Image
-        cropper.canvas.width = canvas.width - 1;
-        cropper.canvas.height = canvas.height - 1;
+        cropper.canvas.width = canvas.width - 2;
+        cropper.canvas.height = canvas.height - 2;
         cropper.drawImage(canvas, 0, 0);
         // put into filesArray
         fetch(cropper.canvas.toDataURL())
@@ -1028,8 +1028,8 @@ function downloadSticker() {
 
     html2canvas(node).then(function(canvas) {
         // Crop Image
-        cropper.canvas.width = canvas.width - 1;
-        cropper.canvas.height = canvas.height - 1;
+        cropper.canvas.width = canvas.width - 2;
+        cropper.canvas.height = canvas.height - 2;
         cropper.drawImage(canvas, 0, 0);
         // Save the cropped image
         saveAs(cropper.canvas.toDataURL(), save_name + '.png');
