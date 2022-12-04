@@ -50,6 +50,7 @@ session_start();
             <div id="languagemenu">
                 <a class="lan" id="en" title="English">EN</a>
                 <a class="lan" id="de" title="Deutsch">DE</a>
+                <a class="lan" id="fr" title="Français">FR</a>
             </div>
         </div>
     </div>

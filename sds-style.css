@@ -179,6 +179,7 @@ h1 {
   margin: 0;
   font-size: 1em;
   width: calc(100% - 1em);
+  height: 1em;
   text-decoration: none;
   color: var(--sds-color-font);
 }

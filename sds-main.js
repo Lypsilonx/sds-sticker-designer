@@ -10,7 +10,10 @@ document.body.classList.add('mobile');
 var background_path = "tree.jpeg";
 
 /** Format of commands in the text (Always use starting and ending characters) */
-var regex_cmd = /\§#?[a-z,0-9]+\$/g;
+var regex_cmd = /\§[a-z,0-9,#]+\$/g;
+
+/** Used to split commands */
+var command_seperator = ',';
 
 /** Max line length for normal input. adjust max_ll_text for using "text" command) */
 var max_ll = 25;
@@ -127,7 +130,7 @@ fetch("language.json")
             renderText();
         }
 
-        // cursor is inside of .input (ontenteditable)
+        // cursor is inside of .input (contenteditable)
         if (document.activeElement.classList.contains('input')) {
             //when ctrl+a is pressed
             if (e.key === 'a' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
@@ -142,11 +145,11 @@ fetch("language.json")
                 selection.addRange(range);
             }
 
-            // when ctrl+x is pressed
-            if (e.key === 'x' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+            // when ctrl+x is pressed (and everything is selected)
+            if (e.key === 'x' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && document.activeElement.innerText.length - 1 == window.getSelection().toString().length) {
                 e.preventDefault();
 
-                // copy to clipboard
+                // copy selected text
                 navigator.clipboard.writeText(document.activeElement.innerText.substring(1));
 
                 // delete text (set to u200b)
@@ -675,22 +678,31 @@ function handleCommands(line) {
     var style = '';
 
     // get all commands
-    var commands = line.match(regex_cmd);
+    var r_commands = line.match(regex_cmd);
+    var commands = [];
+
+    // split at command_seperator, remove empty strings and put the commands in an array
+    for (var i = 0; i < r_commands.length; i++) {
+        if (r_commands[i].length > 0) {
+            if (r_commands[i].search(command_seperator) != -1) {
+                commands = commands.concat(r_commands[i].slice(1, -1).split(command_seperator));
+            } else {
+                commands.push(r_commands[i].slice(1, -1));
+            }
+        }
+    }
 
     // handle commands
     for (var k = 0; k < commands.length; k++) {
         // remove last and first character
-        var cmd = commands[k].slice(1, -1);
-        if (cmd == 'white') {
-            style += 'background-color: white; color: black;';
-        }
-        // if command is #<hex color> set background color to <hex color>
-        else if (cmd.match(/#[0-9a-fA-F]{6}/)) {
+        var cmd = commands[k];
+        // if command is #<hex color> set background color to <hex color> or if command is a color name set background color to the color name
+        if (cmd.match(/#[0-9a-fA-F]{6}/) || cmd.match(/#[0-9a-fA-F]{3}/) || cmd.match(/(red|green|blue|yellow|orange|purple|pink|black|white|grey|gray|brown|cyan|lime|maroon|navy|olive|teal|violet)/)) {
             style += 'background-color: ' + cmd.slice(0) + ';';
 
-            // if color is darker than 50% set text color to white
-            if (parseInt(cmd.slice(1), 16) < 8388608) {
-                style += 'color: white;';
+            // if color is lighter than 50% set text color to black
+            if ((cmd.match(/#[0-9a-fA-F]{6}/) && parseInt(cmd.slice(1, 6), 16) > 0x888888) || (cmd.match(/#[0-9a-fA-F]{3}/) && parseInt(cmd.slice(1, 4), 16) > 0x888) || cmd == 'white' || cmd == 'grey' || cmd == 'gray' || cmd == 'cyan' || cmd == 'lime' || cmd == 'teal' || cmd == 'violet' || cmd == 'yellow') {
+                style += 'color: black;';
             }
         }
         // if command is transparent set background color to transparent
