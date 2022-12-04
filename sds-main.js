@@ -107,7 +107,7 @@ fetch("language.json")
         }
     
         // when backspace is pressed and the cursor is not in an input field or contenteditable
-        if (e.key === 'Backspace' && document.activeElement.tagName != 'INPUT' && document.activeElement.tagName != 'TEXTAREA' && document.activeElement.contentEditable != 'true') {
+        if (e.key === 'Backspace' && document.activeElement.contentEditable != 'true' && document.activeElement.type != 'text') {
             e.preventDefault();
     
             // ask if the user wants to reset the sticker
@@ -125,6 +125,43 @@ fetch("language.json")
             // ! DOES NOT WORK (Have to click off the sticker)
             // Render Text
             renderText();
+        }
+
+        // cursor is inside of .input (ontenteditable)
+        if (document.activeElement.classList.contains('input')) {
+            //when ctrl+a is pressed
+            if (e.key === 'a' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                e.preventDefault();
+
+                //Select all text in the input (contenteditable) except the first character
+                range = document.createRange();
+                range.selectNodeContents(document.activeElement);
+                range.setStart(document.activeElement.firstChild, 1);
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+
+            // when ctrl+x is pressed
+            if (e.key === 'x' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                e.preventDefault();
+
+                // copy to clipboard
+                navigator.clipboard.writeText(document.activeElement.innerText.substring(1));
+
+                // delete text (set to u200b)
+                document.activeElement.innerText = '\u200b';
+            }
+
+            // when ctrl+v is pressed and clipboard is not empty and .input is empty
+            if (e.key === 'v' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && document.activeElement.innerText == '\u200b' && navigator.clipboard.readText() != '') {
+                e.preventDefault();
+
+                // paste from clipboard
+                navigator.clipboard.readText().then(clipText => {
+                    document.activeElement.innerText = '\u200b' + clipText;
+                });
+            }
         }
     });
 
