@@ -520,15 +520,14 @@ function unhidePercentage() {
 function textUpdate() {
     var em = parseFloat(getComputedStyle(document.documentElement).fontSize);
     if (document.querySelector('.input').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
-        document.querySelector('.input').style.transform = 'scale(' + (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / document.querySelector('.input').offsetWidth + ')';
+        var scale = (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / document.querySelector('.input').offsetWidth;
+        document.querySelector('.input').style.transform = 'scale(' + scale + ')';
+        document.querySelector('.renderedtext').style.transform = 'scale(' + scale + ')';
+
+        // scale width of .renderedtext up
+        document.querySelector('.renderedtext').style.width = "calc((200% - 4em) * " + 0.5/scale + ")";
     } else {
         document.querySelector('.input').style.transform = 'scale(0.5)';
-    }
-
-    // scale .renderedtext using the same method
-    if (document.querySelector('.renderedtext').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
-        document.querySelector('.renderedtext').style.transform = 'scale(' + (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / document.querySelector('.renderedtext').offsetWidth + ')';
-    } else {
         document.querySelector('.renderedtext').style.transform = 'scale(0.5)';
     }
 
@@ -578,7 +577,7 @@ function renderText() {
         // create p for every line
 
         // if line is empty add a <br>
-        if (lines[i] == '' && l < max_lines) {
+        if (lines[i].replace(regex_cmd, '') == '' && l < max_lines) {
             // if line is not the last line add a <br>
             if (i != lines.length - 1) {
                 renderedText += '<br>';
@@ -600,8 +599,10 @@ function renderText() {
                             args = handleCommands(line);
                         }
 
-                        renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '')+ '</p>';
-                        l += 1;
+                        if (line.replace(regex_cmd, '').length > 0) {
+                            renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
+                            l += 1;
+                        }
                         line = '';
                     }
                     line += words[j] + ' ';
@@ -610,15 +611,19 @@ function renderText() {
                     args = handleCommands(line);
                 }
 
-                renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
-                l += 1;
+                if (line.replace(regex_cmd, '').length > 0) {
+                    renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
+                    l += 1;
+                }
             } else {
                 if (regex_cmd.test(lines[i])) {
                     args = handleCommands(lines[i]);
                 }
 
-                renderedText += '<p ' + args + '>' + rlines + '</p>';
-                l += 1;
+                if (rlines.replace(regex_cmd, '').length > 0) {
+                    renderedText += '<p ' + args + '>' + rlines + '</p>';
+                    l += 1;
+                }
             }
         }
     }
@@ -676,6 +681,11 @@ function handleCommands(line) {
         else if (cmd == 'right') {
             style += 'align-self: flex-end;';
             style += 'transform-origin: center right;';
+        }
+        // if command is center set align self to center and transform origin to center center
+        else if (cmd == 'center') {
+            style += 'align-self: center;';
+            style += 'transform-origin: center center;';
         }
     }
     return args + 'style="' + style + '"';
