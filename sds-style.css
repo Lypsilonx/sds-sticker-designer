@@ -244,7 +244,7 @@ div:has(#languagebutton) {
 }
 .autocomplete-items {
   position: absolute;
-  border: 1px solid var(--sds-color-font);
+  border: 1px solid var(--sds-color-2);
   border-bottom: none;
   border-top: none;
   display: flex;
@@ -261,13 +261,13 @@ div:has(#languagebutton) {
   cursor: pointer;
   color: var(--sds-color-font);
   background-color: var(--main-bg-color);
-  border-bottom: 1px solid var(--sds-color-font);
+  border-bottom: 1px solid var(--sds-color-2);
   margin: 0;
   width: calc(100% - 1em);
 }
 .autocomplete-items div:hover {
   /*when hovering an item: */
-  background-color: var(--sds-color-font);
+  background-color: var(--sds-color-2);
 }
 .autocomplete-active {
   /*when navigating through the items using the arrow keys: */
@@ -625,7 +625,7 @@ input::-webkit-color-swatch-wrapper {
 }
 .commanddisplay {
   pointer-events: all;
-  background-color: var(--sds-accent-2);
+  background-color: var(--sds-color-2);
   margin: 0.1em;
   padding: 0.1em;
   padding-left: 0.5em;

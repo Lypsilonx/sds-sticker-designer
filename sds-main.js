@@ -480,6 +480,107 @@ function newSticker() {
     // reload page
     location.reload();
 }
+
+/** See https://www.w3schools.com/howto/howto_js_autocomplete.asp */
+function autocomplete(inp, arr, onselect = () => {}) {
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                console.log(inp.value);
+                onselect(inp.value);
+                closeAllLists();
+            });
+
+            a.appendChild(b);
+          }
+        }
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+                /*and simulate a click on the "active" item:*/
+                if (x) x[currentFocus].click();
+            }
+        }
+    });
+    function addActive(x) {
+      /*a function to classify an item as "active":*/
+      if (!x) return false;
+      /*start by removing the "active" class on all items:*/
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      /*add class "autocomplete-active":*/
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      /*a function to remove the "active" class from all autocomplete items:*/
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      /*close all autocomplete lists in the document,
+      except the one passed as an argument:*/
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
 // #endregion
 
 // #region Settings
@@ -597,8 +698,26 @@ function unhidePercentage() {
 /** Scales .input and .renderedtext if the line overflows */
 function textUpdate() {
     var em = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    if (document.querySelector('.input').offsetWidth / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
-        var scale = (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / document.querySelector('.input').offsetWidth;
+    max_width = 0;
+    var words = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split(/<br>| /);
+    for (var i = 0; i < words.length; i++) {
+        // create a div with the text and append it to the body
+        var div = document.createElement('div');
+        div.innerHTML = words[i].replace(regex_cmd, '');
+        div.classList.add('input');
+        div.style.position = 'absolute';
+        document.body.appendChild(div);
+
+        max_width = Math.max(max_width, div.offsetWidth);
+        console.log(words[i]);
+        console.log(div.offsetWidth);
+        document.body.removeChild(div);
+    }
+    console.log(max_width);
+    
+
+    if (max_width / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
+        var scale = (document.querySelector('.backgroundimage').offsetWidth - 5 * em) / max_width;
         document.querySelector('.input').style.transform = 'scale(' + scale + ')';
         document.querySelector('.renderedtext').style.transform = 'scale(' + scale + ')';
 
@@ -707,11 +826,24 @@ function renderText() {
                     renderText();
                 });
 
+                // when enter is pressed in the input
+                e.target.querySelector('input').addEventListener('keydown', function(e) {
+                    if (e.keyCode == 13) {
+                        // get l from data-l in the parent
+                        var l = element.getAttribute('data-l').valueOf();
+                        addCommandToLine(e.target.value, l);
+
+                        renderText();
+                    }
+                });
+
                 // when the input is blurred
                 e.target.querySelector('input').addEventListener('blur', function(e) {
-                    // render the text
-                    element.innerHTML = '+';
-                    element.classList.remove('autocomplete');
+                    // remove autocomplete class after 100ms
+                    setTimeout(function() {
+                        element.innerHTML = '+';
+                        element.classList.remove('autocomplete');
+                    }, 100);
                 });
             });
         }
@@ -727,7 +859,6 @@ function renderText() {
                 // get the command from data-c in the parent
                 var c = element.getAttribute('data-c').valueOf();
                 removeCommandFromLine(c, l);
-                console.log(c);
 
                 renderText();
             });
@@ -747,7 +878,9 @@ function insertLine(line, l, renderedText) {
     var commands = [];
 
     if (regex_cmd.test(line)) {
-        [args, commands] = handleCommands(line);
+        commands = getCommands(line);
+        commands = removeDuplicateCommands(commands, l + 1);
+        args = handleCommands(commands);
     }
     if (line.replace(regex_cmd, '').length > 0) {
         renderedText += '<p ' + args + ' line="' + l + '">' + line.replace(regex_cmd, '') + '</p>';
@@ -771,6 +904,7 @@ function createCommandDisplay(line, commands, l) {
     commanddisplaycontainer.style.top = 'calc(' + (l - 1) + ' * 1.25 * 1.42em)';
 
     if (regex_cmd.test(line)) {
+
         // order commands alphabetically
         commands.sort(function(a, b) {
             return a.localeCompare(b);
@@ -806,6 +940,43 @@ function createCommandDisplay(line, commands, l) {
 }
 
 /**
+ * Removes all (logical) duplicate commands from a line.
+ * @param {[string]} commands - The commands to be checked.
+ * @param {int} l - The line number.
+ * @returns {[string]} commands - The commands without duplicates.
+ */
+function removeDuplicateCommands(commands, l) {
+    var old_commands = commands;
+    commands = [];
+    // remove duplicates and logical duplicates
+    while (old_commands.length > 0) {
+        var first = true;
+        // add old_commands[0] to commands
+        commands.push(old_commands[0]);
+        // remove occurence of old_commands[0] from old_commands
+        old_commands = old_commands.filter(function(value, index, arr) {
+            // when they are the same
+            if ((value == old_commands[0])
+                // when they are both color commands
+                || (value.match(/(red|green|blue|yellow|orange|purple|pink|black|white|grey|gray|brown|cyan|lime|maroon|navy|olive|teal|violet|transparent|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3})/) && old_commands[0].match(/(red|green|blue|yellow|orange|purple|pink|black|white|grey|gray|brown|cyan|lime|maroon|navy|olive|teal|violet|transparent|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3})/))
+                // when they are both align commands
+                || (value.match(/right|left|center/) && old_commands[0].match(/right|left|center/))) {
+                if (!first) {
+                    removeCommandFromLine(value, l - 1);
+                } else {
+                    first = false;
+                }
+                return false;
+            } else {
+                return true;
+            }
+        });
+    }
+
+    return commands;
+}
+
+/**
  * Chooses the correct icon for a command.
  * @param {string} command - The command for which the icon should be chosen.
  * @returns {string} The icon as text (or the command if no icon is found).
@@ -837,12 +1008,16 @@ function commandIcon(command) {
 /** 
  * Adds a command to the line.
  * @param {string} command - The command to be added.
- * @param {int} l - The line number.
+ * @param {int} line - The line number to which the command should be added.
  */
 function addCommandToLine(command, line) {
     var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
 
-    lines[line] = "§" + command + "$" + lines[line];
+    if (line != 0) {
+        lines[line] = "§" + command + "$" + lines[line];
+    } else {
+        lines[line] = lines[line][0] + "§" + command + "$" + lines[line].slice(1);
+    }
 
     document.querySelector('.input').innerHTML = lines.join('<br>');
 }
@@ -850,7 +1025,7 @@ function addCommandToLine(command, line) {
 /**
  * Removes a command from the line.
  * @param {string} command - The command to be removed.
- * @param {int} l - The line number.
+ * @param {int} line - The line number from which the command should be removed.
  */
 function removeCommandFromLine(command, line) {
     var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
@@ -860,11 +1035,12 @@ function removeCommandFromLine(command, line) {
     document.querySelector('.input').innerHTML = lines.join('<br>');
 }
 
-/** Handles the commands in the line and returns the arguments for the p element */
-function handleCommands(line) {
-    var args = '';
-    var style = '';
-
+/**
+ * Extracts the commands from a line.
+ * @param {string} line - The line from which the commands should be extracted.
+ * @returns {array} The commands in an array.
+ */
+function getCommands(line) {
     // get all commands
     var r_commands = line.match(regex_cmd);
     var commands = [];
@@ -879,6 +1055,14 @@ function handleCommands(line) {
             }
         }
     }
+
+    return commands;
+}
+
+/** Handles the commands in the line and returns the arguments for the p element */
+function handleCommands(commands) {
+    var args = '';
+    var style = '';
 
     // handle commands
     for (var k = 0; k < commands.length; k++) {
@@ -930,7 +1114,7 @@ function handleCommands(line) {
             style += 'transform-origin: center center;';
         }
     }
-    return [args + 'style="' + style + '"', commands];
+    return args + 'style="' + style + '"';
 }
 // #endregion
 
@@ -1136,106 +1320,6 @@ function deleteSticker(save_name) {
     localStorage.removeItem('Sticker:' + save_name);
 
     newSticker();
-}
-
-/** See https://www.w3schools.com/howto/howto_js_autocomplete.asp */
-function autocomplete(inp, arr, onselect = () => {}) {
-    /*the autocomplete function takes two arguments,
-    the text field element and an array of possible autocompleted values:*/
-    var currentFocus;
-    /*execute a function when someone writes in the text field:*/
-    inp.addEventListener("input", function(e) {
-        var a, b, i, val = this.value;
-        /*close any already open lists of autocompleted values*/
-        closeAllLists();
-        if (!val) { return false;}
-        currentFocus = -1;
-        /*create a DIV element that will contain the items (values):*/
-        a = document.createElement("DIV");
-        a.setAttribute("id", this.id + "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items");
-        /*append the DIV element as a child of the autocomplete container:*/
-        this.parentNode.appendChild(a);
-        /*for each item in the array...*/
-        for (i = 0; i < arr.length; i++) {
-          /*check if the item starts with the same letters as the text field value:*/
-          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-            /*create a DIV element for each matching element:*/
-            b = document.createElement("DIV");
-            /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-            b.innerHTML += arr[i].substr(val.length);
-            /*insert a input field that will hold the current array item's value:*/
-            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-            /*execute a function when someone clicks on the item value (DIV element):*/
-                b.addEventListener("click", function(e) {
-                /*insert the value for the autocomplete text field:*/
-                inp.value = this.getElementsByTagName("input")[0].value;
-                /*close the list of autocompleted values,
-                (or any other open lists of autocompleted values:*/
-                closeAllLists();
-            });
-            a.appendChild(b);
-          }
-        }
-    });
-    /*execute a function presses a key on the keyboard:*/
-    inp.addEventListener("keydown", function(e) {
-        var x = document.getElementById(this.id + "autocomplete-list");
-        if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) {
-            /*If the arrow DOWN key is pressed,
-            increase the currentFocus variable:*/
-            currentFocus++;
-            /*and and make the current item more visible:*/
-            addActive(x);
-        } else if (e.keyCode == 38) { //up
-            /*If the arrow UP key is pressed,
-            decrease the currentFocus variable:*/
-            currentFocus--;
-            /*and and make the current item more visible:*/
-            addActive(x);
-        } else if (e.keyCode == 13) {
-            /*If the ENTER key is pressed, prevent the form from being submitted,*/
-            e.preventDefault();
-            if (currentFocus > -1) {
-                /*and simulate a click on the "active" item:*/
-                if (x) x[currentFocus].click();
-            }
-
-            onselect(inp.value);
-        }
-    });
-    function addActive(x) {
-      /*a function to classify an item as "active":*/
-      if (!x) return false;
-      /*start by removing the "active" class on all items:*/
-      removeActive(x);
-      if (currentFocus >= x.length) currentFocus = 0;
-      if (currentFocus < 0) currentFocus = (x.length - 1);
-      /*add class "autocomplete-active":*/
-      x[currentFocus].classList.add("autocomplete-active");
-    }
-    function removeActive(x) {
-      /*a function to remove the "active" class from all autocomplete items:*/
-      for (var i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
-      }
-    }
-    function closeAllLists(elmnt) {
-      /*close all autocomplete lists in the document,
-      except the one passed as an argument:*/
-      var x = document.getElementsByClassName("autocomplete-items");
-      for (var i = 0; i < x.length; i++) {
-        if (elmnt != x[i] && elmnt != inp) {
-        x[i].parentNode.removeChild(x[i]);
-      }
-    }
-  }
-  /*execute a function when someone clicks in the document:*/
-  document.addEventListener("click", function (e) {
-      closeAllLists(e.target);
-  });
 }
 // #endregion
 
