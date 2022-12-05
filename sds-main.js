@@ -36,7 +36,7 @@ var command_list = [
     'olive',
     'teal',
     'violet',
-    'transpartent',
+    'transparent',
     'small',
     'text',
     'center',
@@ -724,8 +724,10 @@ function renderText() {
             element.addEventListener('click', function(e) {
                 // get l from data-l in the parent
                 var l = element.getAttribute('data-l').valueOf();
-                removeCommandFromLine(element.innerHTML, l);
-                console.log(element.innerHTML);
+                // get the command from data-c in the parent
+                var c = element.getAttribute('data-c').valueOf();
+                removeCommandFromLine(c, l);
+                console.log(c);
 
                 renderText();
             });
@@ -742,6 +744,7 @@ function renderText() {
  */
 function insertLine(line, l, renderedText) {
     var args = '';
+    var commands = [];
 
     if (regex_cmd.test(line)) {
         [args, commands] = handleCommands(line);
@@ -750,46 +753,85 @@ function insertLine(line, l, renderedText) {
         renderedText += '<p ' + args + ' line="' + l + '">' + line.replace(regex_cmd, '') + '</p>';
         l += 1;
         
-        var cdsize = 1.42;
-        var commanddisplaycontainer = document.createElement('div');
-        commanddisplaycontainer.classList.add('commanddisplaycontainer');
-        commanddisplaycontainer.style.height = cdsize + 'em';
-        commanddisplaycontainer.style.top = 'calc(' + (l - 1) + ' * 1.25 * ' + cdsize + 'em)';
-
-        if (regex_cmd.test(line)) {
-            // order commands alphabetically
-            commands.sort(function(a, b) {
-                return a.localeCompare(b);
-            });
-        
-            var cdsize = 2;
-            for (var j = 0; j < commands.length; j++) {
-                var commanddisplay = document.createElement('div');
-                commanddisplay.classList.add('commanddisplay');
-                commanddisplay.innerHTML = commands[j];
-                commanddisplay.title = translate("--remc_pre--") + commands[j] + translate("--remc_post--");
-
-                //save line number in data-l attribute
-                commanddisplay.setAttribute('data-l', l - 1);
-
-                commanddisplaycontainer.appendChild(commanddisplay);
-            }
-        }
-
-        // add commanddisplay with .addcd to commanddisplaycontainer
-        var addbutton = document.createElement('div')
-        addbutton.classList.add('addcd');
-        addbutton.classList.add('commanddisplay');
-        addbutton.title = translate("--addc--");
-        addbutton.innerHTML = '+';
-        //save line number in data-l attribute
-        addbutton.setAttribute('data-l', l - 1);
-
-        commanddisplaycontainer.appendChild(addbutton);
-
-        renderedText += commanddisplaycontainer.outerHTML;
+        renderedText += createCommandDisplay(line, commands, l);
     }
     return [renderedText, l, args];
+}
+
+/**
+ * Creates the command display for a line.
+ * @param {string} line - The line besides which the command display should be created.
+ * @param {string} commands - The commands to be displayed.
+ * @param {int} l - The line number.
+ * @returns {string} The command display container as text to be added to renderedText.
+ */
+function createCommandDisplay(line, commands, l) {
+    var commanddisplaycontainer = document.createElement('div');
+    commanddisplaycontainer.classList.add('commanddisplaycontainer');
+    commanddisplaycontainer.style.top = 'calc(' + (l - 1) + ' * 1.25 * 1.42em)';
+
+    if (regex_cmd.test(line)) {
+        // order commands alphabetically
+        commands.sort(function(a, b) {
+            return a.localeCompare(b);
+        });
+    
+        for (var j = 0; j < commands.length; j++) {
+            var commanddisplay = document.createElement('div');
+            commanddisplay.classList.add('commanddisplay');
+            commanddisplay.innerHTML = commandIcon(commands[j]);
+            commanddisplay.title = translate("--remc_pre--") + commands[j] + translate("--remc_post--");
+
+            // save line number in data-l attribute
+            commanddisplay.setAttribute('data-l', l - 1);
+            // save command in data-c attribute
+            commanddisplay.setAttribute('data-c', commands[j]);
+
+            commanddisplaycontainer.appendChild(commanddisplay);
+        }
+    }
+
+    // add commanddisplay with .addcd to commanddisplaycontainer
+    var addbutton = document.createElement('div')
+    addbutton.classList.add('addcd');
+    addbutton.classList.add('commanddisplay');
+    addbutton.title = translate("--addc--");
+    addbutton.innerHTML = '+';
+    //save line number in data-l attribute
+    addbutton.setAttribute('data-l', l - 1);
+
+    commanddisplaycontainer.appendChild(addbutton);
+
+    return commanddisplaycontainer.outerHTML;
+}
+
+/**
+ * Chooses the correct icon for a command.
+ * @param {string} command - The command for which the icon should be chosen.
+ * @returns {string} The icon as text (or the command if no icon is found).
+ */
+function commandIcon(command) {
+    var pre = '<i class="material-icons" style="font-size: 1.25em;">';
+    switch (command) {
+        case 'text':
+            return pre + 'text_fields</i>';
+        case 'center':
+            return pre + 'format_align_center</i>';
+        case 'right':
+            return pre + 'format_align_right</i>';
+        case 'left':
+            return pre + 'format_align_left</i>';
+        case 'small':
+            return pre + 'compress</i>';
+        case 'transparent':
+            return pre + 'blur_on</i>';
+        default:
+            if (command.match(/#[0-9a-fA-F]{6}/) || command.match(/#[0-9a-fA-F]{3}/) || command.match(/(red|green|blue|yellow|orange|purple|pink|black|white|grey|gray|brown|cyan|lime|maroon|navy|olive|teal|violet)/)) {
+                return '<i class="material-icons" style="font-size: 1em; color: ' + command + ';">lens</i>';
+            } else {
+                return command;
+            }
+    }
 }
 
 /** 
