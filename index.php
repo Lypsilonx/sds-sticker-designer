@@ -1,6 +1,14 @@
 <?php
 // Start the session
 session_start();
+
+// add session id to sessions.txt
+if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
+    $file = fopen("sessions.txt", "a");
+    // new line
+    fwrite($file, "\r\n");
+    fwrite($file, date("Y-m-d H:i:s") . ": " . session_id());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

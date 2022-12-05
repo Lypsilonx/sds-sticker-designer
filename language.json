@@ -57,7 +57,8 @@
         "--ct--" : "City",
         "--remc_pre--" : "Remove \"",
         "--remc_post--" : "\"",
-        "--addc--" : "Add Styling"
+        "--addc--" : "Add Styling",
+        "--cmd--" : "Styling"
     },
     "de" : {
         "--dl--" : "Herunterladen",
@@ -117,7 +118,8 @@
         "--ct--" : "Stadt",
         "--remc_pre--" : "\"",
         "--remc_post--" : "\" entfernen",
-        "--addc--" : "Styling hinzufügen"
+        "--addc--" : "Styling hinzufügen",
+        "--cmd--" : "Styling"
     },
     "fr" : {
         "--dl--" : "Télécharger",
@@ -177,6 +179,7 @@
         "--ct--" : "Ville",
         "--remc_pre--" : "\"",
         "--remc_post--" : "\" supprimé",
-        "--addc--" : "Ajouter un style"
+        "--addc--" : "Ajouter un style",
+        "--cmd--" : "Style"
     }
 }

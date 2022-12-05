@@ -813,7 +813,7 @@ function renderText() {
             element.addEventListener('click', function(e) {
                 element.classList.add('autocomplete');
                 // set innerHTML to text input and select it
-                e.target.innerHTML = '<input type="text" placeholder="command" value="">';
+                e.target.innerHTML = '<input type="text" placeholder="' + translate("--cmd--") + '" value="">';
                 
                 // select the input
                 e.target.querySelector('input').focus();
