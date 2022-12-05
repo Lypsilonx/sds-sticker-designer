@@ -30,7 +30,7 @@ session_start();
     </div>
     <div>
         <div class="autocomplete">
-            <input type="text" id="save_name" value="Sticker" title="--set_name--">
+            <input autocomplete="off" type="text" id="save_name" value="Sticker" title="--set_name--">
         </div>
         <a id="savebutton" title="--sv--">
             <i class="material-icons">save</i>
@@ -119,14 +119,14 @@ session_start();
                     <div id="opacitypercentage">50%</div>
                 </div>
                 <div class="input" contenteditable="true" onPaste="" onkeydown="" title="--clktxt--">
-                    §command$Dein Spruch...</div>
+                    --ys--</div>
                 <div class="renderedtext active">
-                    <p>Dein Spruch...</p>
+                    <p>--ys--</p>
                 </div>
                 <div class="logo">
                     <div>DIELINKE</div>
                     <div>SDS</div>
-                    <div id="cityname" contenteditable="true" title="--clkct--">Stadt</div>
+                    <div id="cityname" contenteditable="true" title="--clkct--">--ct--</div>
                 </div>
             </div>
         </div>

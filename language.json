@@ -52,7 +52,12 @@
         "--sv_post--" : "\"",
         "--ld_pre--" : "Loaded \"",
         "--ld_post--" : "\"",
-        "--bug--" : "Report a bug"
+        "--bug--" : "Report a bug",
+        "--ys--" : "Your Slogan...",
+        "--ct--" : "City",
+        "--remc_pre--" : "Remove \"",
+        "--remc_post--" : "\"",
+        "--addc--" : "Add Styling"
     },
     "de" : {
         "--dl--" : "Herunterladen",
@@ -107,7 +112,12 @@
         "--sv_post--" : "\" gespeichert",
         "--ld_pre--" : "\"",
         "--ld_post--" : "\" geladen",
-        "--bug--" : "Fehler melden"
+        "--bug--" : "Fehler melden",
+        "--ys--" : "Dein Spruch...",
+        "--ct--" : "Stadt",
+        "--remc_pre--" : "\"",
+        "--remc_post--" : "\" entfernen",
+        "--addc--" : "Styling hinzufügen"
     },
     "fr" : {
         "--dl--" : "Télécharger",
@@ -162,6 +172,11 @@
         "--sv_post--" : "\"",
         "--ld_pre--" : "\"",
         "--ld_post--" : "\" chargé",
-        "--bug--" : "Signaler un bug"
+        "--bug--" : "Signaler un bug",
+        "--ys--" : "Votre phrase...",
+        "--ct--" : "Ville",
+        "--remc_pre--" : "\"",
+        "--remc_post--" : "\" supprimé",
+        "--addc--" : "Ajouter un style"
     }
 }

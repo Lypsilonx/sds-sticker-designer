@@ -15,6 +15,35 @@ var regex_cmd = /\§[a-z,0-9,#]+\$/g;
 /** Used to split commands */
 var command_seperator = ',';
 
+/** List of commands used for autocomplete*/
+var command_list = [
+    'red',
+    'green',
+    'blue',
+    'yellow',
+    'orange',
+    'purple',
+    'pink',
+    'black',
+    'white',
+    'grey',
+    'gray',
+    'brown',
+    'cyan',
+    'lime',
+    'maroon',
+    'navy',
+    'olive',
+    'teal',
+    'violet',
+    'transpartent',
+    'small',
+    'text',
+    'center',
+    'right',
+    'left',
+];
+
 /** Max line length for normal input. adjust max_ll_text for using "text" command) */
 var max_ll = 25;
 
@@ -308,12 +337,21 @@ fetch("language.json")
         updateSaveName();
     });
 
-    // Autocomplete
+    // Autocomplete Save Name
     autocomplete(document.getElementById("save_name"), Object.keys(localStorage).filter(function(key) {
         return key.startsWith('Sticker:');
     }).map(function(key) {
         return key.slice(8);
-    }));
+    }), (input) => {
+        // set save_name to input
+        save_name = input;
+
+        updateSaveName();
+
+        // load sticker
+        loadSticker(save_name);
+        renderText();
+    });
 
     // Delete Button
     document.getElementById('deletebutton').addEventListener('click', function(e) {
@@ -598,7 +636,8 @@ function textUpdate() {
     }
 }
 
-/** Splits the text into lines and adds them to the .renderedtext element.
+/** 
+ * Splits the text into lines and adds them to the .renderedtext element.
  * Passes every line to the handleCommand function and sets the style of the line accordingly.
  */
 function renderText() {
@@ -613,7 +652,7 @@ function renderText() {
             document.querySelector('.renderedtext').innerHTML = '';
             break;
         }
-
+        var args = '';
         // create p for every line
 
         // if line is empty add a <br>
@@ -624,7 +663,6 @@ function renderText() {
                 l += 1;
             }
         } else {
-            var args = '';
             // remove commands %<command> from line
             var rlines = lines[i].replace(regex_cmd, '');
             // if line is too long split it into multiple lines
@@ -634,42 +672,150 @@ function renderText() {
                 for (var j = 0; j < words.length; j++) {
                     // if line is too long (actual size) add a <br>
                     if (line.replace(regex_cmd, '').length + (regex_cmd.test(words[j]) ? 0 : words[j].length) > ((args.search('text') == -1) ? max_ll : max_ll_text)) {
-                        // if commands in line
-                        if (regex_cmd.test(line)) {
-                            args = handleCommands(line);
-                        }
-
-                        if (line.replace(regex_cmd, '').length > 0) {
-                            renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
-                            l += 1;
-                        }
+                        [renderedText, l, args] = insertLine(line, l, renderedText);
                         line = '';
                     }
                     line += words[j] + ' ';
                 }
-                if (line.replace(regex_cmd, '') < line) {
-                    args = handleCommands(line);
-                }
-
-                if (line.replace(regex_cmd, '').length > 0) {
-                    renderedText += '<p ' + args + '>' + line.replace(regex_cmd, '') + '</p>';
-                    l += 1;
-                }
+                [renderedText, l, args] = insertLine(line, l, renderedText);
             } else {
-                if (regex_cmd.test(lines[i])) {
-                    args = handleCommands(lines[i]);
-                }
-
-                if (rlines.replace(regex_cmd, '').length > 0) {
-                    renderedText += '<p ' + args + '>' + rlines + '</p>';
-                    l += 1;
-                }
+                [renderedText, l, args] = insertLine(lines[i], l, renderedText);
             }
         }
     }
 
     // set .renderedtext to the rendered text
     document.querySelector('.renderedtext').innerHTML = renderedText;
+
+    // Add a command to the input
+    document.querySelectorAll('.addcd').forEach(function(element) {
+        // if element is div
+        if (element.tagName == 'DIV') {
+            element.addEventListener('click', function(e) {
+                element.classList.add('autocomplete');
+                // set innerHTML to text input and select it
+                e.target.innerHTML = '<input type="text" placeholder="command" value="">';
+                
+                // select the input
+                e.target.querySelector('input').focus();
+
+                autocomplete(e.target.querySelector('input'), command_list, function(input) {
+                    // get l from data-l in the parent
+                    var l = element.getAttribute('data-l').valueOf();
+                    addCommandToLine(input, l);
+
+                    renderText();
+                });
+
+                // when the input is blurred
+                e.target.querySelector('input').addEventListener('blur', function(e) {
+                    // render the text
+                    element.innerHTML = '+';
+                    element.classList.remove('autocomplete');
+                });
+            });
+        }
+    });
+
+    // Remove a command from the input
+    document.querySelectorAll('.commanddisplay:not(.addcd)').forEach(function(element) {
+        // if element is div
+        if (element.tagName == 'DIV') {
+            element.addEventListener('click', function(e) {
+                // get l from data-l in the parent
+                var l = element.getAttribute('data-l').valueOf();
+                removeCommandFromLine(element.innerHTML, l);
+                console.log(element.innerHTML);
+
+                renderText();
+            });
+        }
+    });
+}
+
+/** 
+ * Inserts a line into the .renderedtext element.
+ * @param {string} line - The line to be inserted.
+ * @param {int} l - The current line number.
+ * @param {string} renderedText - The current rendered text.
+ * @returns {[string, int]} [renderedText, l] - The rendered text and the current line number.
+ */
+function insertLine(line, l, renderedText) {
+    var args = '';
+
+    if (regex_cmd.test(line)) {
+        [args, commands] = handleCommands(line);
+    }
+    if (line.replace(regex_cmd, '').length > 0) {
+        renderedText += '<p ' + args + ' line="' + l + '">' + line.replace(regex_cmd, '') + '</p>';
+        l += 1;
+        
+        var cdsize = 1.42;
+        var commanddisplaycontainer = document.createElement('div');
+        commanddisplaycontainer.classList.add('commanddisplaycontainer');
+        commanddisplaycontainer.style.height = cdsize + 'em';
+        commanddisplaycontainer.style.top = 'calc(' + (l - 1) + ' * 1.25 * ' + cdsize + 'em)';
+
+        if (regex_cmd.test(line)) {
+            // order commands alphabetically
+            commands.sort(function(a, b) {
+                return a.localeCompare(b);
+            });
+        
+            var cdsize = 2;
+            for (var j = 0; j < commands.length; j++) {
+                var commanddisplay = document.createElement('div');
+                commanddisplay.classList.add('commanddisplay');
+                commanddisplay.innerHTML = commands[j];
+                commanddisplay.title = translate("--remc_pre--") + commands[j] + translate("--remc_post--");
+
+                //save line number in data-l attribute
+                commanddisplay.setAttribute('data-l', l - 1);
+
+                commanddisplaycontainer.appendChild(commanddisplay);
+            }
+        }
+
+        // add commanddisplay with .addcd to commanddisplaycontainer
+        var addbutton = document.createElement('div')
+        addbutton.classList.add('addcd');
+        addbutton.classList.add('commanddisplay');
+        addbutton.title = translate("--addc--");
+        addbutton.innerHTML = '+';
+        //save line number in data-l attribute
+        addbutton.setAttribute('data-l', l - 1);
+
+        commanddisplaycontainer.appendChild(addbutton);
+
+        renderedText += commanddisplaycontainer.outerHTML;
+    }
+    return [renderedText, l, args];
+}
+
+/** 
+ * Adds a command to the line.
+ * @param {string} command - The command to be added.
+ * @param {int} l - The line number.
+ */
+function addCommandToLine(command, line) {
+    var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
+
+    lines[line] = "§" + command + "$" + lines[line];
+
+    document.querySelector('.input').innerHTML = lines.join('<br>');
+}
+
+/**
+ * Removes a command from the line.
+ * @param {string} command - The command to be removed.
+ * @param {int} l - The line number.
+ */
+function removeCommandFromLine(command, line) {
+    var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
+
+    lines[line] = lines[line].replace('§' + command + '$', '');
+
+    document.querySelector('.input').innerHTML = lines.join('<br>');
 }
 
 /** Handles the commands in the line and returns the arguments for the p element */
@@ -726,6 +872,11 @@ function handleCommands(line) {
         else if (cmd == 'text') {
             args += 'class = "text"';
         }
+        // if command is left set align self to flex-start and transform origin to center left
+        else if (cmd == 'left') {
+            style += 'align-self: flex-start;';
+            style += 'transform-origin: center left;';
+        }
         // if command is right set align self to flex-end and transform origin to center right
         else if (cmd == 'right') {
             style += 'align-self: flex-end;';
@@ -737,7 +888,7 @@ function handleCommands(line) {
             style += 'transform-origin: center center;';
         }
     }
-    return args + 'style="' + style + '"';
+    return [args + 'style="' + style + '"', commands];
 }
 // #endregion
 
@@ -946,7 +1097,7 @@ function deleteSticker(save_name) {
 }
 
 /** See https://www.w3schools.com/howto/howto_js_autocomplete.asp */
-function autocomplete(inp, arr) {
+function autocomplete(inp, arr, onselect = () => {}) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
     var currentFocus;
@@ -1010,14 +1161,7 @@ function autocomplete(inp, arr) {
                 if (x) x[currentFocus].click();
             }
 
-            // set save_name to inp.value
-            save_name = inp.value;
-
-            updateSaveName();
-
-            // load sticker
-            loadSticker(save_name);
-            renderText();
+            onselect(inp.value);
         }
     });
     function addActive(x) {
