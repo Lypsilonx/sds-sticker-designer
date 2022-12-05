@@ -104,14 +104,19 @@ fetch("language.json")
         document.getElementById('save_name').value = save_name;
     }
     // No Autosave
-    else if (save_name != null) {
+    else if (save_name != null && save_name != "") {
         // put save_name in #save_name
         document.getElementById('save_name').value = save_name;
         loadSticker(save_name);
     }
     // No Save
     else {
-        save_name = "Sticker";
+        save_name = translate("--stck--");
+
+        // put u200b + --ys-- into .input
+        document.querySelector('.input').innerHTML = '\u200b' + translate("--ys--");
+
+        updateSaveName();
     }
 
     // Update Save Name
@@ -709,11 +714,8 @@ function textUpdate() {
         document.body.appendChild(div);
 
         max_width = Math.max(max_width, div.offsetWidth);
-        console.log(words[i]);
-        console.log(div.offsetWidth);
         document.body.removeChild(div);
     }
-    console.log(max_width);
     
 
     if (max_width / 2 > (document.querySelector('.backgroundimage').offsetWidth - 5 * em)) {
@@ -1070,7 +1072,11 @@ function handleCommands(commands) {
         var cmd = commands[k];
         // if command is #<hex color> set background color to <hex color> or if command is a color name set background color to the color name
         if (cmd.match(/#[0-9a-fA-F]{6}/) || cmd.match(/#[0-9a-fA-F]{3}/) || cmd.match(/(red|green|blue|yellow|orange|purple|pink|black|white|grey|gray|brown|cyan|lime|maroon|navy|olive|teal|violet)/)) {
-            style += 'background-color: ' + cmd.slice(0) + ';';
+            if (cmd.match(/#[0-9a-fA-F]{6}/) || cmd.match(/#[0-9a-fA-F]{3}/)) {
+                style += 'background-color: ' + cmd.slice(0) + ';';
+            } else {
+                style += 'background-color: ' + cmd + ';';
+            }
 
             // if color is lighter than 50% set text color to black
             if ((cmd.match(/#[0-9a-fA-F]{6}/) && parseInt(cmd.slice(1, 6), 16) > 0x888888) || (cmd.match(/#[0-9a-fA-F]{3}/) && parseInt(cmd.slice(1, 4), 16) > 0x888) || cmd == 'white' || cmd == 'grey' || cmd == 'gray' || cmd == 'cyan' || cmd == 'lime' || cmd == 'teal' || cmd == 'violet' || cmd == 'yellow') {

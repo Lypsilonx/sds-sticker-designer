@@ -126,11 +126,9 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                 <div class="tint">
                     <div id="opacitypercentage">50%</div>
                 </div>
-                <div class="input" contenteditable="true" onPaste="" onkeydown="" title="--clktxt--">
-                    --ys--</div>
-                <div class="renderedtext active">
-                    <p>--ys--</p>
-                </div>
+                <!-- TODO insert u200b -->
+                <div class="input" contenteditable="true" onPaste="" onkeydown="" title="--clktxt--"></div>
+                <div class="renderedtext active"></div>
                 <div class="logo">
                     <div>DIELINKE</div>
                     <div>SDS</div>
