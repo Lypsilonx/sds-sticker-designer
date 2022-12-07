@@ -40,7 +40,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
     <!-- Save Name Input -->
     <div>
         <div class="autocomplete">
-            <input autocomplete="off" type="text" id="save_name" value="Sticker" title="--set_name--">
+            <input autocomplete="off" type="text" id="save_name" title="--set_name--">
         </div>
         <a id="savebutton" title="--sv--">
             <i class="material-icons">save</i>
@@ -62,6 +62,8 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                 <a class="lan" id="en" title="English">EN</a>
                 <a class="lan" id="de" title="Deutsch">DE</a>
                 <a class="lan" id="fr" title="Français">FR</a>
+                <a class="lan" id="tr" title="Türkçe">TR</a>
+                <a class="lan" id="ru" title="Русский">RU</a>
             </div>
         </div>
     </div>

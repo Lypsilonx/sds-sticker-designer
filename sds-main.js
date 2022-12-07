@@ -121,6 +121,9 @@ fetch("language.json")
             i++;
         }
 
+        // put save_name in #save_name
+        document.getElementById('save_name').value = save_name;
+
         // put u200b + --ys-- into .input
         document.querySelector('.input').innerHTML = '\u200b' + translate("--ys--");
 
@@ -1339,7 +1342,7 @@ function updateSaveName() {
         document.getElementById('deletebutton').style.display = 'flex';
     } else {
         document.getElementById('savebutton').querySelector('i').style.color = 'white';
-        document.getElementById('savebutton').title = 'Save';
+        document.getElementById('savebutton').title = translate('--sv--');
         document.getElementById('loadbutton').style.display = 'none';
         document.getElementById('deletebutton').style.display = 'none';
     }

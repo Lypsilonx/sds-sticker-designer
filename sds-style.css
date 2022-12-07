@@ -175,10 +175,10 @@ h1 {
   display: block;
 }
 #languagemenu a {
-  padding: 0.5em;
+  padding: 0.2em;
   margin: 0;
   font-size: 1em;
-  width: calc(100% - 1em);
+  width: calc(100% - 0.4em);
   height: 1em;
   text-decoration: none;
   color: var(--sds-color-font);
@@ -187,6 +187,7 @@ h1 {
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 1em var(--sds-color-shadow);
+  z-index: 999;
 }
 /* #endregion */
 /* ------------------------ Save/Load ------------------------ */
