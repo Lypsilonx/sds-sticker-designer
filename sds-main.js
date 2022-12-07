@@ -113,6 +113,14 @@ fetch("language.json")
     else {
         save_name = translate("--stck--");
 
+        i = 2;
+
+        // find a save name that is not taken
+        while (localStorage.getItem(save_name) !== null) {
+            save_name = translate("--stck--") + i;
+            i++;
+        }
+
         // put u200b + --ys-- into .input
         document.querySelector('.input').innerHTML = '\u200b' + translate("--ys--");
 
@@ -599,7 +607,7 @@ function setFormat(format) {
             document.querySelector('.stickerdemo').style.width = '28em';
             document.querySelector('.stickerdemo').style.height = '28em';
             max_ll = 25;
-            max_ll_text = 55;
+            max_ll_text = 40;
             scale_factor = 500;
             max_lines = 10;
             break;
@@ -607,7 +615,7 @@ function setFormat(format) {
             // change .stickerdemo width to 20em and height to 30em
             document.querySelector('.stickerdemo').style.width = '20em';
             document.querySelector('.stickerdemo').style.height = '30em';
-            max_ll = 17;
+            max_ll = 15;
             max_ll_text = 25;
             scale_factor = 500;
             max_lines = 10;
@@ -616,7 +624,7 @@ function setFormat(format) {
             // change .stickerdemo width to 20em and height to 40em
             document.querySelector('.stickerdemo').style.width = 0.278 * 1080 + 'px';
             document.querySelector('.stickerdemo').style.height = 0.278 * 1920 + 'px';
-            max_ll = 16;
+            max_ll = 10;
             max_ll_text = 25;
             scale_factor = 650;
             max_lines = 15;
@@ -762,10 +770,13 @@ function textUpdate() {
  * Passes every line to the handleCommand function and sets the style of the line accordingly.
  */
 function renderText() {
+    var lastRendered = -1;
     // for every line in .input (remove the preceding and trailing whitespace)
     var lines = document.querySelector('.input').innerHTML.replace(/^\s+|\s+$/g, '').split('<br>');
     var renderedText = '';
     var l = 0;
+    var la = '';
+
     for (var i = 0; i < lines.length && i <= max_lines; i++) {
         // if .input only contains u200B
         if (lines[i].replace(/\s/g, '') == '\u200B') {
@@ -773,7 +784,6 @@ function renderText() {
             document.querySelector('.renderedtext').innerHTML = '';
             break;
         }
-        var args = '';
         // create p for every line
 
         // if line is empty add a <br>
@@ -783,24 +793,30 @@ function renderText() {
                 renderedText += '<br>';
                 l += 1;
             }
-        } else {
+        } else if (l < max_lines) {
             // remove commands %<command> from line
             var rlines = lines[i].replace(regex_cmd, '');
             // if line is too long split it into multiple lines
-            if (rlines.length > ((args.search('text') == -1) ? max_ll : max_ll_text)) {
+            if (rlines.length > ((lines[i].search(/\§text\$/) == -1) ? max_ll : max_ll_text)) {
                 var words = lines[i].split(' ');
                 var line = '';
                 for (var j = 0; j < words.length; j++) {
                     // if line is too long (actual size) add a <br>
-                    if (line.replace(regex_cmd, '').length + (regex_cmd.test(words[j]) ? 0 : words[j].length) > ((args.search('text') == -1) ? max_ll : max_ll_text)) {
-                        [renderedText, l, args] = insertLine(line, l, renderedText);
+                    if ((line + words[j].length).replace(regex_cmd, '').length > ((lines[i].search(/\§text\$/) == -1) ? max_ll : max_ll_text)) {
+                        [renderedText, la] = insertLine(line, i, renderedText, lastRendered, la);
+                        lastRendered = i;
+                        l++;
                         line = '';
                     }
                     line += words[j] + ' ';
                 }
-                [renderedText, l, args] = insertLine(line, l, renderedText);
+                [renderedText, la] = insertLine(line, i, renderedText, lastRendered, la);
+                lastRendered = i;
+                l++;
             } else {
-                [renderedText, l, args] = insertLine(lines[i], l, renderedText);
+                [renderedText, la] = insertLine(lines[i], i, renderedText, lastRendered, la);
+                lastRendered = i;
+                l++;
             }
         }
     }
@@ -873,24 +889,29 @@ function renderText() {
  * @param {string} line - The line to be inserted.
  * @param {int} l - The current line number.
  * @param {string} renderedText - The current rendered text.
- * @returns {[string, int]} [renderedText, l] - The rendered text and the current line number.
+ * @param {int} lastRendered - The last rendered line.
+ * @returns {string} renderedText - The rendered text.
  */
-function insertLine(line, l, renderedText) {
+function insertLine(line, i, renderedText, lastRendered, lastArgs = '') {
+    var l = i + 1;
     var args = '';
     var commands = [];
 
-    if (regex_cmd.test(line)) {
+    if (regex_cmd.test(line) && i != lastRendered) {
         commands = getCommands(line);
         commands = removeDuplicateCommands(commands, l + 1);
         args = handleCommands(commands);
+    } else {
+        args = lastArgs;
     }
     if (line.replace(regex_cmd, '').length > 0) {
         renderedText += '<p ' + args + ' line="' + l + '">' + line.replace(regex_cmd, '') + '</p>';
-        l += 1;
         
-        renderedText += createCommandDisplay(line, commands, l);
+        if (i != lastRendered) {
+            renderedText += createCommandDisplay(line, commands, l);
+        }
     }
-    return [renderedText, l, args];
+    return [renderedText, args];
 }
 
 /**

@@ -33,9 +33,11 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <div class="cityname">Stckr Dsgnr</div>
         </div>
     </div>
+    <!-- Message -->
     <div id="messageboard" class="hidden">
         Debug message
     </div>
+    <!-- Save Name Input -->
     <div>
         <div class="autocomplete">
             <input autocomplete="off" type="text" id="save_name" value="Sticker" title="--set_name--">
@@ -50,6 +52,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <i class="material-icons">delete</i>
         </a>
     </div>
+    <!-- Language Selection -->
     <div>
         <div class="language">
             <a id="languagebutton" title="--clng--">
@@ -62,21 +65,27 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             </div>
         </div>
     </div>
+    <!-- Bug Button -->
     <a id=bugbutton title="--bug--" href="mailto:support@politischdekoriert.de?subject=Fehler mit der Website&body=Hallo, ich wollte euch auf folgenden Fehler aufmerksam machen:%0D%0A%0D%0A%0D%0A%0D%0ASystem Information:%0D%0A%0D%0A<?php
     $useragent = $_SERVER['HTTP_USER_AGENT'];
     $useragent = str_replace(") ", ")%0D%0A", $useragent);
     echo $useragent; ?>">
         <i class="material-icons">bug_report</i>
     </a>
+    <!-- NO JS -->
     <p id="no-js-msg">--activate--</p>
+    <!-- Sticker Form -->
     <form action="send-sticker.php" method="post" class="stickerdemo-form">
+        <!-- Settings -->
         <div id="settingsfield">
+            <!-- Tint -->
             <div class="cptag">
                 <p>--tnt--</p>
                 <div class="cpframe" title="--bgc--">
                     <input type="color" name="color_tint" id="color_tint" list="presets" value="#b1003a">
                 </div>
             </div>
+            <!-- Format -->
             <div class="cptag">
                 <p>--frm--</p>
                 <select name="format" id="format" title="--frmt--">
@@ -85,6 +94,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                     <option value="Story">--stry--</option>
                 </select>
             </div>
+            <!-- Logo Style -->
             <div class="cptag">
                 <p>--lgs--</p>
                 <select name="logo_style" id="logo_style" title="--stlt--">
@@ -93,6 +103,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                     <option value="Black">--blk--</option>
                 </select>
             </div>
+            <!-- Logo Corner -->
             <div class="cptag">
                 <p>--lgc--</p>
                 <select name="logo_corner" id="logo_corner" title="--cort--">
@@ -107,11 +118,13 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                     </optgroup>
                 </select>
             </div>
+            <!-- Background image -->
             <div class="cptag">
                 <p>--img--</p>
                 <input type="file" id="background_image" class="background_image" title="--bgim--" accept="image/*">
             </div>
         </div>
+        <!-- Color Presets -->
         <datalist id="presets">
             <option value="#161616">--blk--</option>
             <option value="#ffffff">--wht--</option>
@@ -120,13 +133,12 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <option value="#00bba4">--trq--</option>
             <option value="#c6d53a">--grn--</option>
         </datalist>
-
+        <!-- Sticker -->
         <div class="stickerdemo" id="downloadThis" title="--scrollopc--">
             <div class="backgroundimage">
                 <div class="tint">
                     <div id="opacitypercentage">50%</div>
                 </div>
-                <!-- TODO insert u200b -->
                 <div class="input" contenteditable="true" onPaste="" onkeydown="" title="--clktxt--"></div>
                 <div class="renderedtext active"></div>
                 <div class="logo">
@@ -137,11 +149,14 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             </div>
         </div>
     </form>
+    <!-- Export -->
     <div id="downloadfield">
+        <!-- Download -->
         <a id="downloadbutton" class="button" title="--dl--">
             <p>--dl--</p>
             <i class="material-icons">file_download</i>
         </a>
+        <!-- Share -->
         <a id="sharebutton" class="button" title="--sr--">
             <i class="material-icons">share</i>
         </a>
@@ -149,6 +164,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
     <footer>
         <p>--pb--</p>
         <a href="https://www.politischdekoriert.de/" target="_blank" id="pdlogocontainer">
+            <!-- PD Logo -->
             <div class="smalllogo">
                 <h2 id="p">
                     P
