@@ -897,9 +897,9 @@ function insertLine(line, i, renderedText, lastRendered, lastArgs = '') {
     var args = '';
     var commands = [];
 
-    if (regex_cmd.test(line) && i != lastRendered) {
+    if (regex_cmd.test(line) || i != lastRendered) {  
         commands = getCommands(line);
-        commands = removeDuplicateCommands(commands, l + 1);
+        commands = removeDuplicateCommands(commands, i + 1);
         args = handleCommands(commands);
     } else {
         args = lastArgs;
@@ -986,6 +986,7 @@ function removeDuplicateCommands(commands, l) {
                 || (value.match(/right|left|center/) && old_commands[0].match(/right|left|center/))) {
                 if (!first) {
                     removeCommandFromLine(value, l - 1);
+                    console.log('removed duplicate command ' + value + ' from line ' + l);
                 } else {
                     first = false;
                 }
@@ -1066,6 +1067,9 @@ function removeCommandFromLine(command, line) {
 function getCommands(line) {
     // get all commands
     var r_commands = line.match(regex_cmd);
+    if (r_commands == null) {
+        return [];
+    }
     var commands = [];
 
     // split at command_seperator, remove empty strings and put the commands in an array
