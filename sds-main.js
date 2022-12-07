@@ -1121,23 +1121,26 @@ function handleCommands(commands) {
                 style += 'margin-top: calc(-0.8% - 2.5px); margin-bottom: calc(-0.8% - 4.8px);';
             }
         }
-        // if command is text set font-family to Open Sans and font-size to 1em
+        // if command is text set class to text
         else if (cmd == 'text') {
             args += 'class = "text"';
         }
         // if command is left set align self to flex-start and transform origin to center left
         else if (cmd == 'left') {
             style += 'align-self: flex-start;';
+            style += 'text-align: left;';
             style += 'transform-origin: center left;';
         }
         // if command is right set align self to flex-end and transform origin to center right
         else if (cmd == 'right') {
             style += 'align-self: flex-end;';
+            style += 'text-align: right;';
             style += 'transform-origin: center right;';
         }
         // if command is center set align self to center and transform origin to center center
         else if (cmd == 'center') {
             style += 'align-self: center;';
+            style += 'text-align: center;';
             style += 'transform-origin: center center;';
         }
     }

@@ -622,6 +622,9 @@ input::-webkit-color-swatch-wrapper {
 .renderedtext > p.text {
   font-family: Open-Sans;
   font-size: 0.7em;
+  width: calc(100% - 1em);
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
 }
 .commanddisplay {
   pointer-events: all;
