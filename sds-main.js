@@ -48,13 +48,19 @@ var command_list = [
 var max_ll = 25;
 
 /** Max line length when using "text" command */
-var max_ll_text = 55;
+var max_ll_text = 40;
 
 /** Max lines until rendering cuts off */
 var max_lines = 10;
 
 /** Factor used to scale sticker element (Higher -> smaller) */
 var scale_factor = 500;
+
+/** Factor used to scale the sticker element */
+var stickerScale = 1;
+
+/** Size in px of final export */
+var expFormat = [1790, 1790];
 
 /** The current language */
 var language;
@@ -116,8 +122,8 @@ fetch("language.json")
         i = 2;
 
         // find a save name that is not taken
-        while (localStorage.getItem(save_name) !== null) {
-            save_name = translate("--stck--") + i;
+        while (localStorage.getItem("Sticker:" + save_name) != null) {
+            save_name = translate("--stck--") + " " + i;
             i++;
         }
 
@@ -458,12 +464,22 @@ function adjustOnResize() {
         document.body.classList.remove('awkward');
     }
 
-    if (mobile && portrait && !awkward) {
-        // adjust .stickerdemo to be the max of 90% of width of the screen or 90% of height of the screen
-        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9) / scale_factor + ')';
+    if (mobile && !portrait && !awkward) {
+        // set body font-size to 1.5vw
+        document.body.style.fontSize = '1.5vw';
     } else {
+        // set body font-size to unset
+        document.body.style.fontSize = '';
+    }
+
+    if (mobile && portrait && !awkward) {
+        stickerScale = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9) / scale_factor;
+        // adjust .stickerdemo to be the max of 90% of width of the screen or 90% of height of the screen
+        document.querySelector('.stickerdemo').style.transform = 'scale(' + stickerScale + ')';
+    } else {
+        stickerScale = Math.min(window.innerWidth / 2, window.innerHeight / 2) / scale_factor;
         // adjust .stickerdemo to be the max of 50% of the width of the screen or 50% of the height of the screen
-        document.querySelector('.stickerdemo').style.transform = 'scale(' + Math.min(window.innerWidth / 2, window.innerHeight / 2) / scale_factor + ')';
+        document.querySelector('.stickerdemo').style.transform = 'scale(' + stickerScale + ')';
     }
 }
 
@@ -609,32 +625,33 @@ function setFormat(format) {
             // change .stickerdemo width and height to 28em
             document.querySelector('.stickerdemo').style.width = '28em';
             document.querySelector('.stickerdemo').style.height = '28em';
+            expFormat = [1790, 1790];
             max_ll = 25;
             max_ll_text = 40;
-            scale_factor = 500;
             max_lines = 10;
             break;
         case 'Sticker':
             // change .stickerdemo width to 20em and height to 30em
             document.querySelector('.stickerdemo').style.width = '20em';
             document.querySelector('.stickerdemo').style.height = '30em';
+            expFormat = [1280, 1920];
             max_ll = 15;
-            max_ll_text = 25;
-            scale_factor = 500;
+            max_ll_text = 20;
             max_lines = 10;
             break;
         case 'Story':
             // change .stickerdemo width to 20em and height to 40em
-            document.querySelector('.stickerdemo').style.width = 0.278 * 1080 + 'px';
-            document.querySelector('.stickerdemo').style.height = 0.278 * 1920 + 'px';
+            document.querySelector('.stickerdemo').style.width = 0.25 * 1080 + 'px';
+            document.querySelector('.stickerdemo').style.height = 0.25 * 1920 + 'px';
+            expFormat = [1080, 1920];
             max_ll = 10;
-            max_ll_text = 25;
-            scale_factor = 650;
+            max_ll_text = 20;
             max_lines = 15;
             break;
     }
 
     renderText();
+    adjustOnResize();
 }
 
 /** Changes the logo style (Variables in sds-style.css)
@@ -1363,6 +1380,8 @@ function deleteSticker(save_name) {
 // #region Export
 /** Opens navigation.share in supported browsers and gives it the rendered image as a blob */
 function shareSticker() {
+    adjustOnResize();
+
     save_name = document.getElementById('save_name').value;
 
     const filesArray = [];
@@ -1372,10 +1391,10 @@ function shareSticker() {
     // Cropping context
     let cropper = document.createElement('canvas').getContext('2d');
 
-    html2canvas(node, {scale: 4}).then(function(canvas) {
+    html2canvas(node, {scale: 4 * (1 / stickerScale) * (2 / window.devicePixelRatio)}).then(function(canvas) {
         // Crop Image
-        cropper.canvas.width = canvas.width - 4;
-        cropper.canvas.height = canvas.height - 4;
+        cropper.canvas.width = expFormat[0];
+        cropper.canvas.height = expFormat[1];
         cropper.drawImage(canvas, 0, 0);
         // put into filesArray
         fetch(cropper.canvas.toDataURL())
@@ -1398,6 +1417,8 @@ function shareSticker() {
 
 /** Renders the Image and calls saveAs() */
 function downloadSticker() {
+    adjustOnResize();
+
     save_name = document.getElementById('save_name').value;
     
     displayMessage(translate('--dwld--'), "download");
@@ -1407,10 +1428,10 @@ function downloadSticker() {
     // Cropping context
     let cropper = document.createElement('canvas').getContext('2d');
 
-    html2canvas(node, {scale: 4}).then(function(canvas) {
+    html2canvas(node, {scale: 4 * (1 / stickerScale) * (2 / window.devicePixelRatio)}).then(function(canvas) {
         // Crop Image
-        cropper.canvas.width = canvas.width - 4;
-        cropper.canvas.height = canvas.height - 4;
+        cropper.canvas.width = expFormat[0]
+        cropper.canvas.height = expFormat[1]
         cropper.drawImage(canvas, 0, 0);
         // Save the cropped image
         saveAs(cropper.canvas.toDataURL(), save_name + '.png');
