@@ -28,9 +28,9 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
     <script src="html2canvas.js"></script>
     <div id="title">
         <div class="logo">
-            <div>DIELINKE</div>
-            <div>SDS</div>
-            <div class="cityname">Stckr Dsgnr</div>
+            <div>D I E L I N K E</div>
+            <div>S D S</div>
+            <div class="cityname">S t c k r D s g n r</div>
         </div>
     </div>
     <!-- Message -->
@@ -144,8 +144,8 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                 <div class="input" contenteditable="true" onPaste="" onkeydown="" title="--clktxt--"></div>
                 <div class="renderedtext active"></div>
                 <div class="logo">
-                    <div>DIELINKE</div>
-                    <div>SDS</div>
+                    <div>D I E L I N K E</div>
+                    <div>S D S</div>
                     <div id="cityname" contenteditable="true" title="--clkct--">--ct--</div>
                 </div>
             </div>
@@ -163,22 +163,6 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <i class="material-icons">share</i>
         </a>
     </div>
-    <footer>
-        <p>--pb--</p>
-        <a href="https://www.politischdekoriert.de/" target="_blank" id="pdlogocontainer">
-            <!-- PD Logo -->
-            <div class="smalllogo">
-                <h2 id="p">
-                    P
-                </h2>
-                <h2 id="d">
-                    D
-                </h2>
-            </div>
-            <p>--mb-- Lyx</p>
-        </a>
-    </footer>
-
     <script src="sds-main.js"></script>
 </body>
 

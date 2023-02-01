@@ -70,22 +70,6 @@ div {
   /* Space between elements */
   margin: 0.5em;
 }
-footer {
-  position: relative;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 6em;
-  background-color: var(--main-bg-color);
-  color: var(--sds-color-font);
-  text-align: center;
-  /* align elements in middle */
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  /* order vertically */
-  flex-direction: column;
-}
 h1 {
   font-size: 2em;
   margin: 0;
@@ -179,7 +163,7 @@ h1 {
   margin: 0;
   font-size: 1em;
   width: calc(100% - 0.4em);
-  height: 1em;
+  height: 2em;
   text-decoration: none;
   color: var(--sds-color-font);
 }
@@ -211,7 +195,7 @@ h1 {
   bottom: 0;
   position: absolute;
 }
-div:has(#savebutton, #languagebutton) {
+div:has(#savebutton) {
   position: absolute;
   top: 1em;
   margin: 0;
@@ -221,7 +205,9 @@ div:has(#savebutton) {
   box-shadow: 0 0 1em var(--sds-color-shadow);
   right: 1em;
 }
-div:has(#languagebutton) {
+.language {
+  position: absolute;
+  top: 1em;
   left: 1em;
 }
 #save_name {
@@ -283,13 +269,14 @@ div:has(#languagebutton) {
   height: 3em;
   margin: 0;
   position: fixed;
-  bottom: 10em;
+  bottom: 2em;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 #downloadbutton {
   width: 30%;
+  min-width: fit-content;
   margin: 0;
   padding: 0;
   align-items: center;
@@ -307,8 +294,10 @@ div:has(#languagebutton) {
 #settingsfield {
   margin: 0;
   position: absolute;
-  top: calc(50% - 16em);
-  height: 30em;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 100%;
+  overflow-y: scroll;
   left: 0;
   padding: 1em;
   flex-direction: column;
@@ -321,60 +310,8 @@ div:has(#languagebutton) {
 }
 /* #endregion */
 /* -------------------------- Logos -------------------------- */
-/* #region Logos */
-/* PD Logo */
-/* #region PD Logo */
-#pdlogocontainer {
-  position: relative;
-  transition: transform 0.5s ease-in-out;
-  width: 100%;
-  z-index: 2;
-  background-color: transparent;
-}
-#pdlogocontainer:hover {
-  transform: translateX(-7em);
-}
-#pdlogocontainer p {
-  position: absolute;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  opacity: 0;
-  transform: translateX(-7em);
-}
-#pdlogocontainer:hover p {
-  max-width: 100%;
-  transform: translateX(7em);
-  opacity: 1;
-}
-.smalllogo {
-  position: relative;
-  width: 2.5em;
-  height: 4em;
-  border: #161616 0.3em solid;
-  background-color: white;
-  outline: white 0.3em solid;
-  margin: -1em;
-  transform: scale(0.5);
-}
-.smalllogo h2 {
-  bottom: -0.45em;
-  left: 0em;
-  position: absolute;
-  font-size: 2.8em;
-  text-align: center;
-  color: #161616;
-  font-family: "Menlo", monospace;
-}
-.smalllogo h2 ~ h2 {
-  bottom: -1em;
-  left: 0.25em;
-  position: absolute;
-  font-size: 2.8em;
-  color: #e02068;
-  text-align: center;
-}
-/* #endregion */
+/* #region Logo */
 /* SDS Logo */
-/* #region SDS Logo */
 .logo {
   position: absolute;
   bottom: 0;
@@ -382,17 +319,27 @@ div:has(#languagebutton) {
   flex-direction: column;
   width: 5em;
 }
+#title > .logo {
+  transform-origin: top;
+  margin: 0;
+  bottom: auto;
+  right: auto;
+  top: 10%;
+}
 .logo div {
   margin: 0;
   padding: 0;
   justify-content: left;
+  text-align: justify;
+  text-align-last: justify;
+  width: 100%;
+  display: table-row;
+  letter-spacing: -0.2em;
 }
 /* first div in .logo */
 .logo > div {
   font-family: "Open-Sans-Bold";
   font-size: 0.75em;
-  /* spread text */
-  letter-spacing: 0.15em;
   /* all caps */
   text-transform: uppercase;
   color: var(--sds-logo-color);
@@ -403,9 +350,9 @@ div:has(#languagebutton) {
 /* second div in .logo */
 .logo > div ~ div {
   font-family: "Bitter";
-  letter-spacing: 0em;
   font-size: 2.5em;
   margin-left: -0.05em;
+  margin-right: 0.1em;
   /* all caps */
   text-transform: uppercase;
   margin-top: -0.25em;
@@ -418,11 +365,13 @@ div:has(#languagebutton) {
 /* third div in .logo */
 .logo > div ~ div ~ div {
   font-family: "Open-Sans-Bold";
-  font-size: 0.5em;
+  font-size: 0.7em;
   color: var(--sds-logo-color);
+  letter-spacing: normal;
 }
 #title > .logo > div ~ div ~ div {
   color: var(--sds-color-font);
+  letter-spacing: -0.2em;
 }
 #title {
   display: flex;
@@ -433,14 +382,6 @@ div:has(#languagebutton) {
   align-items: center;
   justify-content: center;
 }
-#title .logo {
-  margin: 0;
-  bottom: auto;
-  right: auto;
-  top: 2em;
-  transform: scale(1.5);
-}
-/* #endregion */
 /* #endregion */
 /* -------------------------- Forms -------------------------- */
 /* #region Forms */
@@ -451,7 +392,7 @@ form {
   align-items: center;
   margin: 0;
   padding: 0;
-  height: calc(100% - 8em);
+  height: 100%;
 }
 input[type="color"] {
   border: none;
@@ -645,14 +586,14 @@ input::-webkit-color-swatch-wrapper {
   cursor: pointer;
 }
 .commanddisplaycontainer {
-  right: 0;
+  left: 0;
   position: absolute;
   margin: 0;
   padding: 0;
   height: 1.42em;
   display: flex;
-  justify-content: right;
-  margin-right: calc(100% + 4em);
+  justify-content: left;
+  margin-left: calc(100% + 4em);
 }
 .addcd:has(input) {
   padding: 0;
@@ -687,16 +628,6 @@ input::-webkit-color-swatch-wrapper {
   top: 17%;
   align-items: center;
   justify-content: center;
-}
-.mobile.portrait div:has(#savebutton) {
-  right: 25%;
-}
-.mobile.portrait div:has(#languagebutton) {
-  left: 25%;
-}
-.mobile.portrait #title .logo {
-  transform: scale(3);
-  top: 8em;
 }
 .mobile.portrait #downloadfield {
   height: 4em;
