@@ -172,6 +172,10 @@ h1 {
   flex-direction: column;
   box-shadow: 0 0 1em var(--sds-color-shadow);
   z-index: 999;
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  margin: 0;
 }
 /* #endregion */
 /* ------------------------ Save/Load ------------------------ */
@@ -204,11 +208,6 @@ div:has(#savebutton) {
 div:has(#savebutton) {
   box-shadow: 0 0 1em var(--sds-color-shadow);
   right: 1em;
-}
-.language {
-  position: absolute;
-  top: 1em;
-  left: 1em;
 }
 #save_name {
   border: 0.5em solid var(--sds-color-2);
@@ -367,8 +366,13 @@ div:has(#savebutton) {
   font-family: "Open-Sans-Bold";
   font-size: 0.7em;
   color: var(--sds-logo-color);
-  letter-spacing: normal;
 }
+.logo > div ~ div ~ div:focus {
+  letter-spacing: normal;
+  text-align: center;
+  text-align-last: center;
+}
+
 #title > .logo > div ~ div ~ div {
   color: var(--sds-color-font);
   letter-spacing: -0.2em;
@@ -420,16 +424,22 @@ a {
   align-items: center;
 }
 input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
   font-size: 1.5em;
   align-self: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 3.5em;
-  height: 3.5em;
+  width: 2.5em;
   padding: 0;
   margin-top: 0.5em;
+  background-color: var(--sds-color-2);
+  color: var(--sds-color-font);
 }
+
 input::-webkit-color-swatch-wrapper {
   padding: 0;
 }
@@ -595,6 +605,10 @@ input::-webkit-color-swatch-wrapper {
   justify-content: left;
   margin-left: calc(100% + 4em);
 }
+.portrait:not(.awkward) .commanddisplaycontainer {
+  display: none;
+}
+
 .addcd:has(input) {
   padding: 0;
 }

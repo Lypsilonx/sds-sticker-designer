@@ -102,6 +102,14 @@ fetch("language.json")
     // Apply Language
     setLanguage();
 
+    // split cityname
+    var text = document
+      .getElementById("cityname")
+      .innerText.split("")
+      .join("\xa0");
+
+    document.getElementById("cityname").innerText = text;
+
     // Adjust to screen size
     adjustOnResize();
 
@@ -289,6 +297,31 @@ fetch("language.json")
     document.getElementById("format").addEventListener("change", function (e) {
       setFormat(e.target.value);
     });
+
+    // when #cityname (div contentediatble) is changed (unfocus) change the text of #cityname
+    document.getElementById("cityname").addEventListener("blur", function (e) {
+      // split the text into letters and put "\xa0" between them
+      var text = e.target.innerText.split("").join("\xa0");
+
+      document.getElementById("cityname").innerText = text;
+
+      // remove "&nbsp;" after <br>
+      text = document.getElementById("cityname").innerHTML;
+      text = text.replace(/<br>\&nbsp;/g, "<br>");
+      document.getElementById("cityname").innerHTML = text;
+    });
+
+    // when #cityname (div contentediatble) is clicked (focus) remove all spaces
+    document.getElementById("cityname").addEventListener("focus", function (e) {
+      // get the text
+      var text = e.target.innerText;
+
+      // remove all spaces (\xa0)
+      text = text.replace(/\xa0/g, "");
+
+      document.getElementById("cityname").innerText = text;
+    });
+
     // #endregion
 
     // #region Tint

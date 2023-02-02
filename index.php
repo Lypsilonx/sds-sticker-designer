@@ -53,18 +53,16 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
         </a>
     </div>
     <!-- Language Selection -->
-    <div>
-        <div class="language">
-            <a id="languagebutton" title="--clng--">
-                <i class="material-icons">language</i>
-            </a>
-            <div id="languagemenu">
-                <a class="lan" id="en" title="English">EN</a>
-                <a class="lan" id="de" title="Deutsch">DE</a>
-                <a class="lan" id="fr" title="Français">FR</a>
-                <a class="lan" id="tr" title="Türkçe">TR</a>
-                <a class="lan" id="ru" title="Русский">RU</a>
-            </div>
+    <div class="language">
+        <a id="languagebutton" title="--clng--">
+            <i class="material-icons">language</i>
+        </a>
+        <div id="languagemenu">
+            <a class="lan" id="en" title="English">EN</a>
+            <a class="lan" id="de" title="Deutsch">DE</a>
+            <a class="lan" id="fr" title="Français">FR</a>
+            <a class="lan" id="tr" title="Türkçe">TR</a>
+            <a class="lan" id="ru" title="Русский">RU</a>
         </div>
     </div>
     <!-- Bug Button -->
@@ -123,7 +121,10 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <!-- Background image -->
             <div class="cptag">
                 <p>--img--</p>
-                <input type="file" id="background_image" class="background_image" title="--bgim--" accept="image/*">
+                <label class="custom-file-upload">
+                    <i class="material-icons">file_upload</i>
+                    <input type="file" id="background_image" class="background_image" title="--bgim--" accept="image/*">
+                </label>
             </div>
         </div>
         <!-- Color Presets -->
@@ -146,7 +147,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                 <div class="logo">
                     <div>D I E L I N K E</div>
                     <div>S D S</div>
-                    <div id="cityname" contenteditable="true" title="--clkct--">--ct--</div>
+                    <div id="cityname" contenteditable="true" title="--clkct--" style="max-lines: 1;">--ct--</div>
                 </div>
             </div>
         </div>
