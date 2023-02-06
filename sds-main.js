@@ -181,7 +181,7 @@ fetch("language.json")
       // when backspace is pressed and the cursor is not in an input field or contenteditable
       if (
         e.key === "Backspace" &&
-        document.activeElement.contentEditable != "true" &&
+        document.activeElement.contentEditable != "plaintext-only" &&
         document.activeElement.type != "text"
       ) {
         e.preventDefault();
@@ -845,7 +845,7 @@ function setLogoCorner(corner) {
       break;
     case "Bottom Center":
       logoEl.style.top = "auto";
-      logoEl.style.left = "calc(50% - 2.5em)";
+      logoEl.style.left = "calc(50% - 4.5em)";
       logoEl.style.bottom = "0";
       logoEl.style.right = "auto";
       break;
@@ -944,7 +944,8 @@ function renderText() {
   var lines = document
     .querySelector(".input")
     .innerHTML.replace(/^\s+|\s+$/g, "")
-    .split("<br>");
+    // split the text into lines (<br> or newline)
+    .split(/<br>|\r\n|\r|\n/);
   var renderedText = "";
   var l = 0;
   var la = "";
@@ -1520,7 +1521,7 @@ function packSettings() {
       document.querySelector(".tint").style.opacity == ""
         ? 0.5
         : document.querySelector(".tint").style.opacity,
-    cityname: document.getElementById("cityname").innerText,
+    cityname: document.getElementById("cityname").innerHTML,
     logo_style: document.getElementById("logo_style").value,
     logo_corner: document.getElementById("logo_corner").value,
     format: document.getElementById("format").value,
@@ -1553,7 +1554,7 @@ function unpackSettings(settings) {
     Math.round(settings.tintopacity * 100) + "%";
 
   // set the city name
-  document.getElementById("cityname").innerText = settings.cityname;
+  document.getElementById("cityname").innerHTML = settings.cityname;
 
   // set the logo style
   document.getElementById("logo_style").value = settings.logo_style;

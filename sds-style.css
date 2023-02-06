@@ -315,8 +315,10 @@ div:has(#savebutton) {
   position: absolute;
   bottom: 0;
   right: 0;
+  margin: 2em;
   flex-direction: column;
   width: 5em;
+  z-index: 2;
 }
 #title > .logo {
   transform-origin: top;
@@ -351,7 +353,7 @@ div:has(#savebutton) {
   font-family: "Bitter";
   font-size: 2.5em;
   margin-left: -0.05em;
-  margin-right: 0.1em;
+  width: 98%;
   /* all caps */
   text-transform: uppercase;
   margin-top: -0.25em;
@@ -366,6 +368,7 @@ div:has(#savebutton) {
   font-family: "Open-Sans-Bold";
   font-size: 0.7em;
   color: var(--sds-logo-color);
+  width: 102%;
 }
 .logo > div ~ div ~ div:focus {
   letter-spacing: normal;
@@ -376,12 +379,13 @@ div:has(#savebutton) {
 #title > .logo > div ~ div ~ div {
   color: var(--sds-color-font);
   letter-spacing: -0.2em;
+  width: 100%;
 }
 #title {
   display: flex;
   flex-direction: row;
   height: 10%;
-  width: 100%;
+  width: 101%;
   position: absolute;
   align-items: center;
   justify-content: center;
