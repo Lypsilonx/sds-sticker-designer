@@ -126,7 +126,7 @@ h1 {
 .no-js footer {
   bottom: 5%;
 }
-.no-js div:has(#savebutton, #languagebutton) {
+.no-js #savefield {
   display: none;
 }
 #no-js-msg {
@@ -199,15 +199,15 @@ h1 {
   bottom: 0;
   position: absolute;
 }
-div:has(#savebutton) {
+#savefield {
   position: absolute;
   top: 1em;
   margin: 0;
   z-index: 100;
-}
-div:has(#savebutton) {
   box-shadow: 0 0 1em var(--sds-color-shadow);
   right: 1em;
+  justify-content: right;
+  z-index: 100;
 }
 #save_name {
   border: 0.5em solid var(--sds-color-2);
@@ -642,7 +642,7 @@ input::-webkit-color-swatch-wrapper {
   bottom: 17%;
   transform: scale(1.2);
 }
-.mobile.portrait div:has(#savebutton, #languagebutton) {
+.mobile.portrait #savefield {
   top: 17%;
   align-items: center;
   justify-content: center;
@@ -668,16 +668,9 @@ input::-webkit-color-swatch-wrapper {
   left: 5%;
   transform: scale(0.8);
 }
-.portrait.awkward div:has(#savebutton, #languagebutton) {
+.portrait.awkward #savefield {
   top: 5%;
   align-items: center;
-  justify-content: center;
-}
-.portrait.awkward div:has(#savebutton) {
-  right: 0;
-}
-.portrait.awkward div:has(#languagebutton) {
-  left: 0;
 }
 .portrait.awkward #title .logo {
   transform: scale(2);

@@ -38,7 +38,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
         Debug message
     </div>
     <!-- Save Name Input -->
-    <div>
+    <div id="savefield">
         <div class="autocomplete">
             <input autocomplete="off" type="text" id="save_name" title="--set_name--">
         </div>
@@ -142,7 +142,14 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                 <div class="tint">
                     <div id="opacitypercentage">50%</div>
                 </div>
-                <div class="input" contenteditable="plaintext-only" onPaste="" onkeydown="" title="--clktxt--">
+                <div class="input" contenteditable="<?php
+                // use plaintext-only if available in this browser
+                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== false) {
+                    echo "true";
+                } else {
+                    echo "plaintext-only";
+                }
+                ?>" onPaste="" onkeydown="" title="--clktxt--">
                 </div>
                 <div class="renderedtext active"></div>
                 <div class="logo">
