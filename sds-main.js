@@ -43,6 +43,7 @@ var command_list = [
   "violet",
   "transparent",
   "small",
+  "big",
   "text",
   "center",
   "right",
@@ -80,8 +81,30 @@ var save_name;
 
 // Load Language Setting
 if (localStorage.getItem("language") === null) {
-  language = "en";
+  // get language from browser
+  language = navigator.language.split("-")[0];
+  // if language is not supported, use english
+  fetch("language.json")
+    .then((response) => response.json())
+    .then((json) => {
+      languageJSON = json;
+      if (languageJSON[language] === undefined) {
+        language = "en";
+      }
+      // save language setting
+      localStorage.setItem("language", language);
+      // apply language
+      setLanguage();
+    });
 } else {
+  // at 1st of april change the language to "c" if the language is set to "de"
+  if (
+    localStorage.getItem("language") == "de" &&
+    new Date().getMonth() == 3 &&
+    new Date().getDate() == 1
+  ) {
+    localStorage.setItem("language", "c");
+  }
   language = localStorage.getItem("language");
 }
 
@@ -187,7 +210,7 @@ fetch("language.json")
         e.preventDefault();
 
         // ask if the user wants to reset the sticker
-        if (!confirm("Do you really want to reset the sticker?")) {
+        if (!confirm(translate("--rst--"))) {
           return;
         }
 
@@ -272,11 +295,22 @@ fetch("language.json")
         loadBackgroundImage(e.target.files[0]);
       });
 
-    // when color_tint is changed update the background color of .tint
+    // when color_tint is changed update the background color of .tint and the background color of .cpframe
     document
       .getElementById("color_tint")
       .addEventListener("change", function (e) {
         document.querySelector(".tint").style.backgroundColor = e.target.value;
+        document.querySelector(".cpframe").style.backgroundColor =
+          e.target.value;
+
+        // update the font color of .cpframe to be either black or white depending on the brightness of the background color
+        if (isLightColor(e.target.value)) {
+          document.querySelector(".cpframe > .material-icons").style.color =
+            "#000";
+        } else {
+          document.querySelector(".cpframe > .material-icons").style.color =
+            "#fff";
+        }
       });
 
     // when logo_style is changed change the css variable --sds-logo-color and --sds-logo-color-middle
@@ -292,6 +326,11 @@ fetch("language.json")
       .addEventListener("change", function (e) {
         setLogoCorner(e.target.value);
       });
+
+    // when effect is changed change the css variable --sds-effect
+    document.getElementById("effect").addEventListener("change", function (e) {
+      setEffect(e.target.value);
+    });
 
     // when #format is changed change the format of the sticker
     document.getElementById("format").addEventListener("change", function (e) {
@@ -387,6 +426,16 @@ fetch("language.json")
     document.querySelector(".input").addEventListener("click", function (e) {
       document.querySelector(".input").classList.add("active");
       document.querySelector(".renderedtext").classList.remove("active");
+
+      // if .input is empty (only \u200b) set the caret to the end of the input
+      if (document.querySelector(".input").innerText == "\u200b") {
+        var range = document.createRange();
+        var sel = window.getSelection();
+        range.setStart(document.querySelector(".input").childNodes[0], 1);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
     });
 
     // Switch to Edit Mode
@@ -523,6 +572,29 @@ fetch("language.json")
         document.getElementById("languagemenu").classList.toggle("open");
       });
 
+    // when an a with class lan is hovered over
+    document.querySelectorAll(".lan").forEach(function (element) {
+      element.addEventListener("mouseover", function (e) {
+        // set the a's background to the appropriate flag
+        // get the flag from the a's id
+        var ccode = element.id;
+
+        if (ccode == "en") {
+          ccode = "gb";
+        }
+
+        if (ccode != "c") {
+          url = "https://flagcdn.com/w80/" + ccode + ".png";
+          element.style.backgroundImage = "url(" + url + ")";
+        }
+      });
+
+      element.addEventListener("mouseout", function (e) {
+        // reset the a's background
+        element.style.backgroundImage = "";
+      });
+    });
+
     // when an a with class lan is clicked
     document.querySelectorAll(".lan").forEach(function (element) {
       element.addEventListener("click", function (e) {
@@ -623,6 +695,23 @@ function displayMessage(message, icon = "") {
   setTimeout(function () {
     document.getElementById("messageboard").classList.add("hidden");
   }, 3000);
+}
+
+function isLightColor(color) {
+  return (
+    (color.match(/#[0-9a-fA-F]{6}/) &&
+      parseInt(color.slice(1, 6), 16) > 0x888888) ||
+    (color.match(/#[0-9a-fA-F]{3}/) &&
+      parseInt(color.slice(1, 4), 16) > 0x888) ||
+    color == "white" ||
+    color == "grey" ||
+    color == "gray" ||
+    color == "cyan" ||
+    color == "lime" ||
+    color == "teal" ||
+    color == "violet" ||
+    color == "yellow"
+  );
 }
 
 /** Resets the sticker to its original form by reloading the page and deleting the 'temp' save */
@@ -850,6 +939,15 @@ function setLogoCorner(corner) {
       logoEl.style.right = "auto";
       break;
   }
+}
+
+/** Changes the effect applied to the background image
+ * @param {string} effect - The effect to change to (css filter)
+ */
+function setEffect(effect) {
+  // set backdrop-filter and -webkit-backdrop-filter to the effect
+  document.querySelector(".effect").style.backdropFilter = effect;
+  document.querySelector(".effect").style.webkitBackdropFilter = effect;
 }
 // #endregion
 
@@ -1150,6 +1248,7 @@ function createCommandDisplay(line, commands, l) {
     for (var j = 0; j < commands.length; j++) {
       var commanddisplay = document.createElement("div");
       commanddisplay.classList.add("commanddisplay");
+      commanddisplay.classList.add("shadow-button");
       commanddisplay.innerHTML = commandIcon(commands[j]);
       commanddisplay.title =
         translate("--remc_pre--") + commands[j] + translate("--remc_post--");
@@ -1166,6 +1265,7 @@ function createCommandDisplay(line, commands, l) {
   // add commanddisplay with .addcd to commanddisplaycontainer
   var addbutton = document.createElement("div");
   addbutton.classList.add("addcd");
+  addbutton.classList.add("shadow-button");
   addbutton.classList.add("commanddisplay");
   addbutton.title = translate("--addc--");
   addbutton.innerHTML = "+";
@@ -1241,6 +1341,8 @@ function commandIcon(command) {
       return pre + "format_align_left</i>";
     case "small":
       return pre + "compress</i>";
+    case "big":
+      return pre + "expand</i>";
     case "transparent":
       return pre + "blur_on</i>";
     default:
@@ -1351,20 +1453,7 @@ function handleCommands(commands) {
       }
 
       // if color is lighter than 50% set text color to black
-      if (
-        (cmd.match(/#[0-9a-fA-F]{6}/) &&
-          parseInt(cmd.slice(1, 6), 16) > 0x888888) ||
-        (cmd.match(/#[0-9a-fA-F]{3}/) &&
-          parseInt(cmd.slice(1, 4), 16) > 0x888) ||
-        cmd == "white" ||
-        cmd == "grey" ||
-        cmd == "gray" ||
-        cmd == "cyan" ||
-        cmd == "lime" ||
-        cmd == "teal" ||
-        cmd == "violet" ||
-        cmd == "yellow"
-      ) {
+      if (isLightColor(cmd)) {
         style += "color: black;";
       }
     }
@@ -1385,6 +1474,21 @@ function handleCommands(commands) {
         //set top and bottom margins to -0.8%
         style +=
           "margin-top: calc(-0.8% - 2.5px); margin-bottom: calc(-0.8% - 4.8px);";
+      }
+    }
+    // if command is big set scale to 1.2
+    else if (cmd == "big") {
+      style += "transform: scale(1.2);";
+
+      // if format is square
+      if (document.getElementById("format").value == "Square") {
+        //set top and bottom margins to -1.2% (and accord for 1px gap)
+        style +=
+          "margin-top: calc(0.8% + 1px); margin-bottom: calc(0.8% + 1px);";
+      } else {
+        //set top and bottom margins to -1.2%
+        style +=
+          "margin-top: calc(0.8% + 2.5px); margin-bottom: calc(0.8% + 3.8px);";
       }
     }
     // if command is text set class to text
@@ -1446,13 +1550,7 @@ function saveSticker(save_name) {
     // if save_name is already taken
     if (localStorage.getItem("Sticker:" + save_name) != null) {
       // ask if the user wants to overwrite the sticker
-      if (
-        !confirm(
-          'A sticker with the name "' +
-            save_name +
-            '" already exists. Do you want to overwrite it?'
-        )
-      ) {
+      if (!confirm(translate('--ovwr-- "') + save_name + '"?')) {
         return;
       }
     }
@@ -1517,6 +1615,7 @@ function packSettings() {
     text: text,
     background_image: background_path,
     color_tint: document.getElementById("color_tint").value,
+    effect: document.getElementById("effect").value,
     tintopacity:
       document.querySelector(".tint").style.opacity == ""
         ? 0.5
@@ -1547,6 +1646,10 @@ function unpackSettings(settings) {
   // set the color of .tint
   document.getElementById("color_tint").value = settings.color_tint;
   document.querySelector(".tint").style.backgroundColor = settings.color_tint;
+
+  // set the effect
+  document.getElementById("effect").value = settings.effect;
+  setEffect(settings.effect);
 
   // set the opacity percentage
   document.querySelector(".tint").style.opacity = settings.tintopacity;
@@ -1618,13 +1721,13 @@ function updateSaveName() {
     ) != null
   ) {
     document.getElementById("savebutton").querySelector("i").style.color =
-      "red";
+      "var(--main-bg-color)";
     document.getElementById("savebutton").title = translate("--ovwr--");
     document.getElementById("loadbutton").style.display = "flex";
     document.getElementById("deletebutton").style.display = "flex";
   } else {
     document.getElementById("savebutton").querySelector("i").style.color =
-      "white";
+      "var(--sds-color-font)";
     document.getElementById("savebutton").title = translate("--sv--");
     document.getElementById("loadbutton").style.display = "none";
     document.getElementById("deletebutton").style.display = "none";

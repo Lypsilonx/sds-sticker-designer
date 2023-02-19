@@ -1,8 +1,8 @@
 /* ------------------------ Variables ------------------------ */
 /* #region Variables */
 :root {
-  --sds-logo-color-middle: #ffffff;
-  --sds-logo-color: #ffffff;
+  --sds-logo-color-middle: #fff;
+  --sds-logo-color: #fff;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -11,19 +11,19 @@
     --sds-color-2: #c6d53a;
     --sds-accent-1: #2d0a41;
     --sds-accent-2: #b1003a;
-    --sds-color-shadow: #000;
-    --sds-color-font: white;
+    --sds-color-shadow: #eeeeee;
+    --sds-color-font: #fff;
   }
 }
 @media (prefers-color-scheme: light) {
   :root {
-    --main-bg-color: white;
+    --main-bg-color: #eeeeee;
     --sds-color-1: #2d0a41;
     --sds-color-2: #b1003a;
     --sds-accent-1: #00bba4;
     --sds-accent-2: #c6d53a;
-    --sds-color-shadow: #000;
-    --sds-color-font: #161616;
+    --sds-color-shadow: #161616;
+    --sds-color-font: #000;
   }
 }
 /* #endregion */
@@ -95,7 +95,6 @@ h1 {
   height: 4em;
   overflow: hidden;
   background-color: var(--main-bg-color);
-  box-shadow: 0 0 1em var(--sds-color-shadow);
   z-index: 100;
   text-align: center;
   align-items: center;
@@ -153,29 +152,43 @@ h1 {
   display: none;
   padding: 0;
   margin: 0;
-  width: 100%;
+  z-index: 999;
+  background-color: var(--main-bg-color);
+  /* 3 rows and x colums */
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1em;
 }
 #languagemenu.open {
-  display: block;
+  display: grid;
 }
 #languagemenu a {
   padding: 0.2em;
   margin: 0;
   font-size: 1em;
-  width: calc(100% - 0.4em);
   height: 2em;
+  width: 2em;
   text-decoration: none;
   color: var(--sds-color-font);
+
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
+
+#languagemenu a:hover {
+  text-shadow: 0 0 0.2em var(--main-bg-color);
+}
+
 .language {
   display: flex;
-  flex-direction: column;
-  box-shadow: 0 0 1em var(--sds-color-shadow);
+  flex-direction: row;
   z-index: 999;
   position: absolute;
   top: 1em;
   left: 1em;
   margin: 0;
+  gap: 1em;
 }
 /* #endregion */
 /* ------------------------ Save/Load ------------------------ */
@@ -204,10 +217,9 @@ h1 {
   top: 1em;
   margin: 0;
   z-index: 100;
-  box-shadow: 0 0 1em var(--sds-color-shadow);
   right: 1em;
   justify-content: right;
-  z-index: 100;
+  width: min-content;
 }
 #save_name {
   border: 0.5em solid var(--sds-color-2);
@@ -217,6 +229,8 @@ h1 {
   height: 1.6em;
   margin: 0;
   position: relative;
+  background-color: var(--main-bg-color);
+  color: var(--sds-color-font);
 }
 /* #endregion */
 /* ---------------------- Autocomplete ----------------------- */
@@ -271,38 +285,54 @@ h1 {
   bottom: 2em;
   display: flex;
   justify-content: center;
+  gap: 1em;
   align-items: center;
 }
 #downloadbutton {
-  width: 30%;
-  min-width: fit-content;
+  max-width: 60%;
   margin: 0;
-  padding: 0;
+  padding: 0 0.5em;
   align-items: center;
   display: flex;
   justify-content: center;
-  box-shadow: 0 0 1em var(--sds-color-shadow);
   z-index: 2;
+  gap: 0.5em;
 }
+#downloadbutton p {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 #sharebutton {
-  box-shadow: 0 0 1em var(--sds-color-shadow);
+  width: 2em;
+  height: 2em;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
 }
 /* #endregion */
 /* ------------------------ Settings ------------------------- */
 /* #region Settings */
 #settingsfield {
   margin: 0;
+  padding: 1em;
+  padding-top: 1.5em;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   max-height: 100%;
   overflow-y: scroll;
   left: 0;
-  padding: 1em;
+  gap: 2em;
   flex-direction: column;
-  background-color: var(--main-bg-color);
   z-index: 2;
-  border-radius: 2em;
+  transform-origin: left center;
 }
 #settingsfield * {
   flex-direction: column;
@@ -351,13 +381,13 @@ h1 {
 /* second div in .logo */
 .logo > div ~ div {
   font-family: "Bitter";
-  font-size: 2.5em;
+  font-size: 2.75em;
   margin-left: -0.05em;
   width: 98%;
   /* all caps */
   text-transform: uppercase;
   margin-top: -0.25em;
-  margin-bottom: -0.13em;
+  margin-bottom: -0.1em;
   color: var(--sds-logo-color-middle);
 }
 #title > .logo > div ~ div {
@@ -402,14 +432,33 @@ form {
   padding: 0;
   height: 100%;
 }
-input[type="color"] {
-  border: none;
-  font-size: 1.5em;
-  width: 2em;
-  height: 2em;
+
+.cpframe > .material-icons {
+  font-size: 3em;
   margin: 0;
   padding: 0;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+.cpframe > input[type="color"] {
+  visibility: hidden;
+}
+.cpframe {
+  font-size: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 5em;
+  height: 5em;
+  padding: 0;
+  margin: 0;
+  background-color: #b1003a;
+}
+
 input[type="submit"],
 a {
   border: none;
@@ -431,37 +480,103 @@ input[type="file"] {
   display: none;
 }
 
-.custom-file-upload {
-  font-size: 1.5em;
-  align-self: center;
+#imtint {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  width: 2.5em;
+  margin: 0;
   padding: 0;
-  margin-top: 0.5em;
-  background-color: var(--sds-color-2);
-  color: var(--sds-color-font);
+  height: 100%;
+  gap: 1em;
 }
 
-input::-webkit-color-swatch-wrapper {
-  padding: 0;
+#imtint > .cptag:last-child {
+  align-items: end;
 }
-.cpframe {
-  align-self: center;
+
+.custom-file-upload {
+  font-size: 0.5em;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: var(--sds-color-font) 0.4em solid;
-  width: 3.5em;
-  height: 3.5em;
+  height: 5em;
+  width: 5em;
+  background-color: var(--sds-color-2);
+  color: var(--sds-color-font);
+  cursor: pointer;
+}
+
+.shadow-button {
+  border: var(--sds-color-shadow) 0.1rem solid;
+  box-shadow: var(--sds-color-shadow) 0.25rem 0.25rem 0 0;
+
+  transition: box-shadow transform 1s ease-in-out;
+}
+.shadow-button:hover:not(.unresponsive),
+.shadow-button:focus:not(.unresponsive) {
+  box-shadow: var(--sds-color-shadow) 0.2rem 0.2rem 0 0;
+  transform: translate(0.05rem, 0.05rem);
+}
+.shadow-button:active:not(.unresponsive) {
+  box-shadow: var(--sds-color-shadow) 0.1rem 0.1rem 0 0;
+  transform: translate(0.15rem, 0.15rem);
+}
+
+.custom-file-upload > .material-icons {
+  font-size: 3em;
+  margin: 0;
   padding: 0;
 }
 .cptag {
+  margin: 0;
   align-self: center;
   display: flex;
-  width: 8em;
+  text-align: left;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+  position: relative;
+}
+
+.cptag > p {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  font-size: 0.7em;
+  color: var(--sds-color-font);
+
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  transform: translate(0.5em, -100%);
+}
+
+.cptag select {
+  font-size: 0.5em;
+  width: 100%;
+  margin: 0;
+  color: var(--sds-color-font);
   text-align: center;
+  text-align-last: center;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-color: var(--main-bg-color);
+  padding: 0.2em 0.5em;
+  border-radius: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cptag select:focus {
+  outline: none;
 }
 /* #endregion */
 /* ------------------------- Sticker ------------------------- */
@@ -472,7 +587,7 @@ input::-webkit-color-swatch-wrapper {
   height: 28em;
   position: absolute;
   margin: 0;
-  box-shadow: var(--sds-color-shadow) 0em 0em 1em 0.2em;
+  box-shadow: var(--sds-color-shadow) 0.5em 0.5em 0 0;
 }
 .stickerdemo #opacitypercentage {
   width: 100%;
@@ -512,6 +627,14 @@ input::-webkit-color-swatch-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.effect {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
 }
 .input {
   opacity: 0%;
@@ -633,54 +756,29 @@ input::-webkit-color-swatch-wrapper {
 /* #region Mobile/Scaling */
 /* Portrait */
 /* #region Portrait */
-.mobile.portrait #settingsfield {
+.portrait #settingsfield {
   flex-direction: row;
-  left: calc(50% - 21em);
-  width: 40em;
+  left: 50%;
+  transform-origin: center bottom;
+  transform: translateX(-50%) scale(0.8);
+  min-width: fit-content;
   height: unset;
   top: unset;
-  bottom: 17%;
-  transform: scale(1.2);
+  bottom: 2em;
 }
-.mobile.portrait #savefield {
+
+.portrait #savefield {
+  left: 50%;
+  transform: translateX(-50%);
   top: 17%;
   align-items: center;
   justify-content: center;
 }
-.mobile.portrait #downloadfield {
+.portrait #downloadfield {
   height: 4em;
   margin: 0;
   position: fixed;
-  bottom: 12%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-/* #endregion */
-/* Awkward */
-/* #region Awkward */
-.portrait.awkward #settingsfield {
-  flex-direction: column;
-  top: calc(50% - 21em);
-  height: 40em;
-  width: unset;
-  bottom: unset;
-  left: 5%;
-  transform: scale(0.8);
-}
-.portrait.awkward #savefield {
-  top: 5%;
-  align-items: center;
-}
-.portrait.awkward #title .logo {
-  transform: scale(2);
-  top: 40%;
-}
-.portrait.awkward #downloadfield {
-  height: 4em;
-  margin: 0;
-  position: fixed;
-  bottom: 20%;
+  bottom: 8em;
   display: flex;
   justify-content: center;
   align-items: center;

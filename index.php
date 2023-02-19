@@ -17,7 +17,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
     <meta charset="utf-8">
     <meta name="viewport" content="maximum-scale=1.0, user-scalable=0">
     </meta>
-    <title>SDS Sticker Designer by PD
+    <title>SDS Sticker Designer
     </title>
     <link rel="icon" type="image/x-icon" href="../data/favicon.ico">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -38,7 +38,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
         Debug message
     </div>
     <!-- Save Name Input -->
-    <div id="savefield">
+    <div id="savefield" class="shadow-button unresponsive">
         <div class="autocomplete">
             <input autocomplete="off" type="text" id="save_name" title="--set_name--">
         </div>
@@ -54,15 +54,16 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
     </div>
     <!-- Language Selection -->
     <div class="language">
-        <a id="languagebutton" title="--clng--">
+        <a id="languagebutton" title="--clng--" class="shadow-button">
             <i class="material-icons">language</i>
         </a>
         <div id="languagemenu">
-            <a class="lan" id="en" title="English">EN</a>
-            <a class="lan" id="de" title="Deutsch">DE</a>
-            <a class="lan" id="fr" title="Français">FR</a>
-            <a class="lan" id="tr" title="Türkçe">TR</a>
-            <a class="lan" id="ru" title="Русский">RU</a>
+            <a class="lan shadow-button" id="en" title="English">EN</a>
+            <a class="lan shadow-button" id="de" title="Deutsch">DE</a>
+            <a class="lan shadow-button" id="fr" title="Français">FR</a>
+            <a class="lan shadow-button" id="tr" title="Türkçe">TR</a>
+            <a class="lan shadow-button" id="ru" title="Русский">RU</a>
+            <a class="lan shadow-button" id="c" title="Kommunismus">C</a>
         </div>
     </div>
     <!-- Bug Button -->
@@ -73,22 +74,43 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
         <i class="material-icons">bug_report</i>
     </a>
     <!-- NO JS -->
-    <p id="no-js-msg">--activate--</p>
+    <p id="no-js-msg">Please activate scripts to create a sticker</p>
     <!-- Sticker Form -->
     <form action="send-sticker.php" method="post" class="stickerdemo-form">
         <!-- Settings -->
         <div id="settingsfield">
-            <!-- Tint -->
-            <div class="cptag">
-                <p>--tnt--</p>
-                <div class="cpframe" title="--bgc--">
-                    <input type="color" name="color_tint" id="color_tint" list="presets" value="#b1003a">
+            <div id="imtint">
+                <!-- Tint -->
+                <div class="cptag">
+                    <p>--tnt--</p>
+                    <label class="cpframe shadow-button" title="--bgc--" for="color_tint">
+                        <input type="color" name="color_tint" id="color_tint" list="presets" value="#b1003a">
+                        <div class="material-icons">colorize</div>
+                    </label>
                 </div>
+                <!-- Background image -->
+                <div class="cptag">
+                    <p>--img--</p>
+                    <label class="custom-file-upload shadow-button">
+                        <i class="material-icons">file_upload</i>
+                        <input type="file" id="background_image" class="background_image" title="--bgim--"
+                            accept="image/*">
+                    </label>
+                </div>
+            </div>
+            <!-- Effect -->
+            <div class="cptag">
+                <p>--eff--</p>
+                <select name="effect" id="effect" title="--eff--" class="shadow-button">
+                    <option value="" selected>--non--</option>
+                    <option value="blur(0.2em)">--blu--</option>
+                    <option value="grayscale(100%) saturate(3)">--twc--</option>
+                </select>
             </div>
             <!-- Format -->
             <div class="cptag">
                 <p>--frm--</p>
-                <select name="format" id="format" title="--frmt--">
+                <select name="format" id="format" title="--frmt--" class="shadow-button">
                     <option value="Square" selected>--sqr--</option>
                     <option value="Sticker">--stck--</option>
                     <option value="Story">--stry--</option>
@@ -97,7 +119,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <!-- Logo Style -->
             <div class="cptag">
                 <p>--lgs--</p>
-                <select name="logo_style" id="logo_style" title="--stlt--">
+                <select name="logo_style" id="logo_style" title="--stlt--" class="shadow-button">
                     <option value="Classic">--cls--</option>
                     <option value="White" selected>--wht--</option>
                     <option value="Black">--blk--</option>
@@ -106,7 +128,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
             <!-- Logo Corner -->
             <div class="cptag">
                 <p>--lgc--</p>
-                <select name="logo_corner" id="logo_corner" title="--cort--">
+                <select name="logo_corner" id="logo_corner" title="--cort--" class="shadow-button">
                     <optgroup label="--t--">
                         <option value="Top Left">--tl--</option>
                         <option value="Top Right">--tr--</option>
@@ -117,14 +139,6 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                         <option value="Bottom Right" selected>--br--</option>
                     </optgroup>
                 </select>
-            </div>
-            <!-- Background image -->
-            <div class="cptag">
-                <p>--img--</p>
-                <label class="custom-file-upload">
-                    <i class="material-icons">file_upload</i>
-                    <input type="file" id="background_image" class="background_image" title="--bgim--" accept="image/*">
-                </label>
             </div>
         </div>
         <!-- Color Presets -->
@@ -139,6 +153,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
         <!-- Sticker -->
         <div class="stickerdemo" id="downloadThis" title="--scrollopc--">
             <div class="backgroundimage">
+                <div class="effect"></div>
                 <div class="tint">
                     <div id="opacitypercentage">50%</div>
                 </div>
@@ -163,12 +178,12 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
     <!-- Export -->
     <div id="downloadfield">
         <!-- Download -->
-        <a id="downloadbutton" class="button" title="--dl--">
+        <a id="downloadbutton" class="button shadow-button" title="--dl--">
             <p>--dl--</p>
             <i class="material-icons">file_download</i>
         </a>
         <!-- Share -->
-        <a id="sharebutton" class="button" title="--sr--">
+        <a id="sharebutton" class="button shadow-button" title="--sr--">
             <i class="material-icons">share</i>
         </a>
     </div>
