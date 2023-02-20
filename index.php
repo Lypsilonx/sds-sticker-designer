@@ -34,7 +34,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
         </div>
     </div>
     <!-- Message -->
-    <div id="messageboard" class="hidden">
+    <div id="messageboard" class="shadow-button unresponsive hidden">
         Debug message
     </div>
     <!-- Save Name Input -->
@@ -106,6 +106,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                     <option value="blur(0.2em)">--blu--</option>
                     <option value="grayscale(100%) saturate(3)">--twc--</option>
                 </select>
+                <div class="material-icons">arrow_drop_down</div>
             </div>
             <!-- Format -->
             <div class="cptag">
@@ -115,6 +116,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                     <option value="Sticker">--stck--</option>
                     <option value="Story">--stry--</option>
                 </select>
+                <div class="material-icons">arrow_drop_down</div>
             </div>
             <!-- Logo Style -->
             <div class="cptag">
@@ -124,6 +126,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                     <option value="White" selected>--wht--</option>
                     <option value="Black">--blk--</option>
                 </select>
+                <div class="material-icons">arrow_drop_down</div>
             </div>
             <!-- Logo Corner -->
             <div class="cptag">
@@ -139,6 +142,7 @@ if ($_SERVER['REMOTE_ADDR'] != 'localhost') {
                         <option value="Bottom Right" selected>--br--</option>
                     </optgroup>
                 </select>
+                <div class="material-icons">arrow_drop_down</div>
             </div>
         </div>
         <!-- Color Presets -->

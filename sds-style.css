@@ -87,19 +87,23 @@ h1 {
 /* #region Messageboard */
 #messageboard {
   position: absolute;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding: 0 1em;
   bottom: 1em;
   opacity: 1;
   right: 1em;
   height: 4em;
+
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
   background-color: var(--main-bg-color);
   z-index: 100;
-  text-align: center;
+  text-align: left;
   align-items: center;
-  justify-content: space-between;
-  width: 40%;
+  justify-content: flex-start;
+  gap: 1em;
+
   /* animate comig up */
   transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
@@ -162,22 +166,29 @@ h1 {
 #languagemenu.open {
   display: grid;
 }
-#languagemenu a {
-  padding: 0.2em;
+.lan {
+  padding: 0.2rem;
   margin: 0;
   font-size: 1em;
-  height: 2em;
-  width: 2em;
+  height: 2rem;
+  width: 2rem;
   text-decoration: none;
   color: var(--sds-color-font);
 
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#languagemenu a:hover {
+.lan:hover {
   text-shadow: 0 0 0.2em var(--main-bg-color);
+  font-size: 0.2em;
+  justify-content: left;
+  align-items: start;
 }
 
 .language {
@@ -197,10 +208,17 @@ h1 {
 #languagebutton,
 #loadbutton,
 #deletebutton {
+  --hover-color: var(--main-bg-color);
   width: 2em;
   height: 2em;
   margin: 0;
   padding: 0;
+}
+#savebutton:hover,
+#loadbutton:hover,
+#deletebutton:hover {
+  background-color: var(--sds-color-font);
+  color: var(--hover-color);
 }
 #bugbutton {
   width: 1em;
@@ -346,6 +364,7 @@ h1 {
   bottom: 0;
   right: 0;
   margin: 2em;
+  margin-bottom: 1.5em;
   flex-direction: column;
   width: 5em;
   z-index: 2;
@@ -508,19 +527,30 @@ input[type="file"] {
 }
 
 .shadow-button {
-  border: var(--sds-color-shadow) 0.1rem solid;
-  box-shadow: var(--sds-color-shadow) 0.25rem 0.25rem 0 0;
+  --shadow-distance: 0.25rem;
+  --border-size: 0.1rem;
+  border: var(--sds-color-shadow) var(--border-size) solid;
+  box-shadow: var(--sds-color-shadow) var(--shadow-distance)
+    var(--shadow-distance) 0 0;
 
   transition: box-shadow transform 1s ease-in-out;
 }
 .shadow-button:hover:not(.unresponsive),
 .shadow-button:focus:not(.unresponsive) {
-  box-shadow: var(--sds-color-shadow) 0.2rem 0.2rem 0 0;
-  transform: translate(0.05rem, 0.05rem);
+  box-shadow: var(--sds-color-shadow) calc(var(--shadow-distance) * 0.75)
+    calc(var(--shadow-distance) * 0.75) 0 0;
+  transform: translate(
+    calc(var(--shadow-distance) * 0.25),
+    calc(var(--shadow-distance) * 0.25)
+  );
 }
 .shadow-button:active:not(.unresponsive) {
-  box-shadow: var(--sds-color-shadow) 0.1rem 0.1rem 0 0;
-  transform: translate(0.15rem, 0.15rem);
+  box-shadow: var(--sds-color-shadow) calc(var(--shadow-distance) * 0.25)
+    calc(var(--shadow-distance) * 0.25) 0 0;
+  transform: translate(
+    calc(var(--shadow-distance) * 0.75),
+    calc(var(--shadow-distance) * 0.75)
+  );
 }
 
 .custom-file-upload > .material-icons {
@@ -568,11 +598,27 @@ input[type="file"] {
 
   background-color: var(--main-bg-color);
   padding: 0.2em 0.5em;
+  padding-right: 2.5em;
   border-radius: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.cptag select ~ .material-icons {
+  font-size: 1.5em;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
+  pointer-events: none;
 }
 
 .cptag select:focus {

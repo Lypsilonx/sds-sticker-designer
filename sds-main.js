@@ -77,6 +77,9 @@ var languageJSON;
 /** Content of the save_name box */
 var save_name;
 
+/** Opacity timer */
+var opacityTimer;
+
 // #endregion
 
 // Load Language Setting
@@ -133,9 +136,6 @@ fetch("language.json")
 
     document.getElementById("cityname").innerText = text;
 
-    // Adjust to screen size
-    adjustOnResize();
-
     // Load Save Name
     save_name = localStorage.getItem("save_name");
 
@@ -182,6 +182,9 @@ fetch("language.json")
 
     // Render Text
     renderText();
+
+    // Adjust to screen size
+    adjustOnResize();
 
     // #endregion
 
@@ -364,18 +367,24 @@ fetch("language.json")
     // #endregion
 
     // #region Tint
-    // wehn entering .stickerdemo with mouse stop the timer and unhide #opacitypercentage
+    // wehn entering #opacitypercentage with mouse stop the timer and unhide #opacitypercentage
     document
-      .querySelector(".stickerdemo")
+      .getElementById("opacitypercentage")
       .addEventListener("mouseenter", function (e) {
-        unhidePercentage();
+        // stop the timer
+        clearTimeout(opacityTimer);
+        // unhide #opacitypercentage
+        opacityTimer = unhidePercentage();
       });
 
-    // when scrolling on .stickerdemo update the opacity of .tint
+    // when scrolling on #opacitypercentage update the opacity of .tint
     document
-      .querySelector(".stickerdemo")
+      .getElementById("opacitypercentage")
       .addEventListener("wheel", function (e) {
-        unhidePercentage();
+        // stop the timer
+        clearTimeout(opacityTimer);
+        // unhide #opacitypercentage
+        opacityTimer = unhidePercentage();
         // set opacity of .tint
         // get the current opacity
         var opacity = document.querySelector(".tint").style.opacity;
@@ -411,6 +420,8 @@ fetch("language.json")
     document
       .querySelector(".stickerdemo")
       .addEventListener("mouseleave", function (e) {
+        // stop the timer
+        clearTimeout(opacityTimer);
         // hide #opacitypercentage
         document.getElementById("opacitypercentage").style.opacity = 0;
       });
@@ -666,6 +677,15 @@ function adjustOnResize() {
     // Scale #title > .logo according to the scale of .stickerdemo
     document.querySelector("#title > .logo").style.transform =
       "scale(" + 2 * stickerScale + ")";
+
+    // Scale all .commanddisplay's --shadow-distance and --border-size to be larger (inverse of scale)
+    document.querySelectorAll(".commanddisplay").forEach(function (element) {
+      element.style.setProperty(
+        "--shadow-distance",
+        0.5 * stickerScale + "rem"
+      );
+      element.style.setProperty("--border-size", 0.2 * stickerScale + "rem");
+    });
   } else {
     stickerScale =
       Math.min(window.innerWidth / 2, window.innerHeight / 2) / scale_factor;
@@ -676,6 +696,15 @@ function adjustOnResize() {
     // Scale #title > .logo according to the scale of .stickerdemo
     document.querySelector("#title > .logo").style.transform =
       "scale(" + 2 * stickerScale + ")";
+
+    // Scale all .commanddisplay's --shadow-distance to be larger (inverse of scale)
+    document.querySelectorAll(".commanddisplay").forEach(function (element) {
+      element.style.setProperty(
+        "--shadow-distance",
+        0.5 * stickerScale + "rem"
+      );
+      element.style.setProperty("--border-size", 0.2 * stickerScale + "rem");
+    });
   }
 }
 
@@ -961,6 +990,8 @@ function unhidePercentage() {
   var timer = setTimeout(function () {
     document.getElementById("opacitypercentage").style.opacity = 0;
   }, 2000);
+
+  return timer;
 }
 // #endregion
 
@@ -1720,14 +1751,16 @@ function updateSaveName() {
       "Sticker:" + document.getElementById("save_name").value
     ) != null
   ) {
-    document.getElementById("savebutton").querySelector("i").style.color =
-      "var(--main-bg-color)";
+    document
+      .getElementById("savebutton")
+      .style.setProperty("--hover-color", "#f00");
     document.getElementById("savebutton").title = translate("--ovwr--");
     document.getElementById("loadbutton").style.display = "flex";
     document.getElementById("deletebutton").style.display = "flex";
   } else {
-    document.getElementById("savebutton").querySelector("i").style.color =
-      "var(--sds-color-font)";
+    document
+      .getElementById("savebutton")
+      .style.setProperty("--hover-color", "var(--main-bg-color)");
     document.getElementById("savebutton").title = translate("--sv--");
     document.getElementById("loadbutton").style.display = "none";
     document.getElementById("deletebutton").style.display = "none";
